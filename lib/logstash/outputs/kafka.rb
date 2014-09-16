@@ -105,10 +105,6 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
-    jarpath = File.join(File.dirname(__FILE__), "../../../vendor/jar/kafka*/libs/*.jar")
-    Dir[jarpath].each do |jar|
-      require jar
-    end
     require 'jruby-kafka'
     options = {
       :topic_id => @topic_id,
