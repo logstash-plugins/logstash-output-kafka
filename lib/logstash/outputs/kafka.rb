@@ -1,5 +1,6 @@
 require 'logstash/namespace'
 require 'logstash/outputs/base'
+require 'logstash-output-kafka_jars'
 
 # Write events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on
 # the broker.
