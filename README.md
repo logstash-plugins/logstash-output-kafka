@@ -40,7 +40,7 @@ The default codec is json for outputs.  If you select a codec of plain, logstash
 but also with a timestamp and hostname.  If you do not want anything but your message passing through, you should make
 the output configuration something like:
 
-    # output {
+    output {
         kafka {
             codec => plain {
                 format => "%{message}"
