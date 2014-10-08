@@ -101,40 +101,39 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :send_buffer_bytes, :validate => :number, :default => 100 * 1024
   # The client id is a user-specified string sent in each request to help trace calls. It should
   # logically identify the application making the request.
-  config :client_id, :validate => :string, :default => ""
+  config :client_id, :validate => :string, :default => ''
 
   public
   def register
     require 'jruby-kafka'
     options = {
-      :topic_id => @topic_id,
-      :broker_list => @broker_list,
-      :compression_codec => @compression_codec,
-      :compressed_topics => @compressed_topics,
-      :request_required_acks => @request_required_acks,
-      :serializer_class => @serializer_class,
-      :partitioner_class => @partitioner_class,
-      :request_timeout_ms => @request_timeout_ms,
-      :producer_type => @producer_type,
-      :key_serializer_class => @key_serializer_class,
-      :message_send_max_retries => @message_send_max_retries,
-      :retry_backoff_ms => @retry_backoff_ms,
-      :topic_metadata_refresh_interval_ms => @topic_metadata_refresh_interval_ms,
-      :queue_buffering_max_ms => @queue_buffering_max_ms,
-      :queue_buffering_max_messages => @queue_buffering_max_messages,
-      :queue_enqueue_timeout_ms => @queue_enqueue_timeout_ms,
-      :batch_num_messages => @batch_num_messages,
-      :send_buffer_bytes => @send_buffer_bytes,
-      :client_id => @client_id
+        :broker_list => @broker_list,
+        :compression_codec => @compression_codec,
+        :compressed_topics => @compressed_topics,
+        :request_required_acks => @request_required_acks,
+        :serializer_class => @serializer_class,
+        :partitioner_class => @partitioner_class,
+        :request_timeout_ms => @request_timeout_ms,
+        :producer_type => @producer_type,
+        :key_serializer_class => @key_serializer_class,
+        :message_send_max_retries => @message_send_max_retries,
+        :retry_backoff_ms => @retry_backoff_ms,
+        :topic_metadata_refresh_interval_ms => @topic_metadata_refresh_interval_ms,
+        :queue_buffering_max_ms => @queue_buffering_max_ms,
+        :queue_buffering_max_messages => @queue_buffering_max_messages,
+        :queue_enqueue_timeout_ms => @queue_enqueue_timeout_ms,
+        :batch_num_messages => @batch_num_messages,
+        :send_buffer_bytes => @send_buffer_bytes,
+        :client_id => @client_id
     }
     @producer = Kafka::Producer.new(options)
-    @producer.connect()
+    @producer.connect
 
     @logger.info('Registering kafka producer', :topic_id => @topic_id, :broker_list => @broker_list)
 
     @codec.on_event do |event|
       begin
-        @producer.sendMsg(@topic_id,nil,event)
+        @producer.send_msg(@topic_id,nil,event)
       rescue LogStash::ShutdownSignal
         @logger.info('Kafka producer got shutdown signal')
       rescue => e
@@ -153,4 +152,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
     @codec.encode(event)
   end
 
+  def teardown
+    @producer.close
+  end
 end #class LogStash::Outputs::Kafka
