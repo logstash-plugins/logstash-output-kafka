@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'logstash-codec-plain'
   s.add_runtime_dependency 'logstash-codec-json'
 
-  s.add_runtime_dependency 'jar-dependencies', ['~> 0.1.0']
+  s.add_runtime_dependency 'jar-dependencies'
 
   s.add_runtime_dependency 'jruby-kafka', ['>=0.2.1']
 end
