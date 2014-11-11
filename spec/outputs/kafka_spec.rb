@@ -1,14 +1,13 @@
 # encoding: utf-8
+require 'spec_helper'
 
-require 'rspec'
-require 'insist'
-require 'logstash/namespace'
-require 'logstash/timestamp'
-require 'logstash/outputs/kafka'
+describe "outputs/kafka" do
+  let (:kafka_config) {{'topic_id' => 'test'}}
 
-describe LogStash::Outputs::Kafka do
-
-  let (:kafka_config) {{:topic_id => 'test'}}
+  it "should register" do
+    output = LogStash::Plugin.lookup("output", "kafka").new(kafka_config)
+    expect {output.register}.to_not raise_error
+  end
 
   it 'should populate kafka config with default values' do
     kafka = LogStash::Outputs::Kafka.new(kafka_config)
@@ -18,11 +17,6 @@ describe LogStash::Outputs::Kafka do
     insist {kafka.serializer_class} == 'kafka.serializer.StringEncoder'
     insist {kafka.partitioner_class} == 'kafka.producer.DefaultPartitioner'
     insist {kafka.producer_type} == 'sync'
-  end
-
-  it 'should register and load kafka jars without errors' do
-    kafka = LogStash::Outputs::Kafka.new(kafka_config)
-    kafka.register
   end
 
   it 'should send logstash event to kafka broker' do
