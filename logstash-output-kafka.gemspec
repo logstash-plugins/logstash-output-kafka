@@ -1,13 +1,13 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-output-kafka'
-  s.version         = '0.1.1'
+  s.version         = '0.1.2'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = 'Output events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on the broker'
-  s.description     = 'Output events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on the broker'
+  s.description     = "This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/plugin install gemname. This gem is not a stand-alone program"
   s.authors         = ['Elasticsearch']
   s.email           = 'richard.pijnenburg@elasticsearch.com'
-  s.homepage        = 'http://logstash.net/'
+  s.homepage        = "http://www.elasticsearch.org/guide/en/logstash/current/index.html"
   s.require_paths = ['lib']
 
   # Files
@@ -31,4 +31,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'jar-dependencies'
 
   s.add_runtime_dependency 'jruby-kafka', ['>=0.2.1']
+  s.add_development_dependency 'logstash-devutils'
 end
