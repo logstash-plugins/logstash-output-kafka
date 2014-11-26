@@ -1,5 +1,8 @@
 # encoding: utf-8
 require "logstash/devutils/rspec/spec_helper"
+require 'logstash/outputs/kafka'
+require 'logstash-output-kafka_jars'
+require 'jruby-kafka'
 
 describe "outputs/kafka" do
   let (:kafka_config) {{'topic_id' => 'test'}}
