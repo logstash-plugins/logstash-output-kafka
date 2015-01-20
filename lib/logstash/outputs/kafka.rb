@@ -23,7 +23,6 @@ require 'logstash-output-kafka_jars'
 # Kafka producer configuration: http://kafka.apache.org/documentation.html#producerconfigs
 class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config_name 'kafka'
-  milestone 1
 
   default :codec, 'json'
   # This is for bootstrapping and the producer will only use it for getting metadata (topics,
