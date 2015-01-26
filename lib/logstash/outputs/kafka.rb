@@ -133,7 +133,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
     @codec.on_event do |event, data|
       begin
-        @producer.send_msg(@topic_id,nil,data)
+        @producer.send_msg(event.sprintf(@topic_id),nil,data)
       rescue LogStash::ShutdownSignal
         @logger.info('Kafka producer got shutdown signal')
       rescue => e
