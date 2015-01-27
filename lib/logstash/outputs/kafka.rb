@@ -105,7 +105,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
+    LogStash::Logger.setup_log4j(@logger)
     require 'jruby-kafka'
+
     options = {
         :broker_list => @broker_list,
         :compression_codec => @compression_codec,
