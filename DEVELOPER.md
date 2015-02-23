@@ -23,7 +23,7 @@ See http://kafka.apache.org/documentation.html#producerconfigs for details about
             partitioner_class => ... # string (optional) default: "kafka.producer.DefaultPartitioner"
             request_timeout_ms => ... # number (optional) default: 10000
             producer_type => ... # string (optional), one of ["sync", "async"] default => 'sync'
-            key_serializer_class => ... # string (optional) default: nil
+            key_serializer_class => ... # string (optional) default: kafka.serializer.StringEncoder
             message_send_max_retries => ... # number (optional) default: 3
             retry_backoff_ms => ... # number (optional) default: 100
             topic_metadata_refresh_interval_ms => ... # number (optional) default: 600 * 1000
@@ -33,6 +33,7 @@ See http://kafka.apache.org/documentation.html#producerconfigs for details about
             batch_num_messages => ... # number (optional) default: 200
             send_buffer_bytes => ... # number (optional) default: 100 * 1024
             client_id => ... # string (optional) default: ""
+            partition_key_format => ... # string (optional) default: nil, Provides a way to specify a partition key as a string
         }
     }
 
