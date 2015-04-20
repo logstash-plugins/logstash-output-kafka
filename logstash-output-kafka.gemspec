@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.summary         = 'Output events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on the broker'
   s.description     = "This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/plugin install gemname. This gem is not a stand-alone program"
   s.authors         = ['Elasticsearch']
-  s.email           = 'info@elasticsearch.com'
-  s.homepage        = "http://www.elasticsearch.org/guide/en/logstash/current/index.html"
+  s.email           = 'info@elastic.co'
+  s.homepage        = "http://www.elastic.co/guide/en/logstash/current/index.html"
   s.require_paths = ['lib']
 
   # Files
