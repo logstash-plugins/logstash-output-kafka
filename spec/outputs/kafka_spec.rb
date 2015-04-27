@@ -17,19 +17,16 @@ describe "outputs/kafka" do
 
     it 'should populate kafka config with default values' do
       kafka = LogStash::Outputs::Kafka.new(simple_kafka_config)
-      insist {kafka.broker_list} == 'localhost:9092'
+      insist {kafka.bootstrap_servers} == 'localhost:9092'
       insist {kafka.topic_id} == 'test'
-      insist {kafka.compression_codec} == 'none'
-      insist {kafka.serializer_class} == 'kafka.serializer.StringEncoder'
-      insist {kafka.partitioner_class} == 'kafka.producer.DefaultPartitioner'
-      insist {kafka.producer_type} == 'sync'
+      insist {kafka.key_serializer} == 'org.apache.kafka.common.serialization.StringSerializer'
     end
   end
 
   context 'when outputting messages' do
     it 'should send logstash event to kafka broker' do
-      expect_any_instance_of(Kafka::Producer).to receive(:send_msg)
-        .with(simple_kafka_config['topic_id'], nil, event.to_json)
+      expect_any_instance_of(Kafka::KafkaProducer).to receive(:send_msg)
+        .with(simple_kafka_config['topic_id'], nil, nil, event.to_hash.to_json)
       kafka = LogStash::Outputs::Kafka.new(simple_kafka_config)
       kafka.register
       kafka.receive(event)
@@ -37,19 +34,17 @@ describe "outputs/kafka" do
 
     it 'should support Event#sprintf placeholders in topic_id' do
       topic_field = 'topic_name'
-      expect_any_instance_of(Kafka::Producer).to receive(:send_msg)
-        .with(event[topic_field], nil, event.to_json)
+      expect_any_instance_of(Kafka::KafkaProducer).to receive(:send_msg)
+        .with(event[topic_field], nil, nil, event.to_hash.to_json)
       kafka = LogStash::Outputs::Kafka.new({'topic_id' => "%{#{topic_field}}"})
       kafka.register
       kafka.receive(event)
     end
 
-    it 'should support Event#sprintf placeholders in partition_key_format' do
-      partition_field = 'host'
-      expect_any_instance_of(Kafka::Producer).to receive(:send_msg)
-        .with(simple_kafka_config['topic_id'], event[partition_field], event.to_json)
-      kafka = LogStash::Outputs::Kafka.new({'topic_id' => simple_kafka_config['topic_id'],
-                                            'partition_key_format' => "%{#{partition_field}}"})
+    it 'should support field referenced message_keys' do
+      expect_any_instance_of(Kafka::KafkaProducer).to receive(:send_msg)
+        .with(simple_kafka_config['topic_id'], nil, event['host'], event.to_hash.to_json)
+      kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge({"message_key" => "%{host}"}))
       kafka.register
       kafka.receive(event)
     end
