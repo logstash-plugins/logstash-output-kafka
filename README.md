@@ -1,6 +1,6 @@
 # Logstash Plugin
 
-This is a plugin for [Logstash](https://github.com/elasticsearch/logstash).
+This is a plugin for [Logstash](https://github.com/elastic/logstash).
 
 It is fully free and fully open source. The license is Apache 2.0, meaning you are pretty much free to use it however you want in whatever way.
 
@@ -25,6 +25,7 @@ Need help? Try #logstash on freenode IRC or the https://discuss.elastic.co/c/log
 - Create a new plugin or clone and existing from the GitHub [logstash-plugins](https://github.com/logstash-plugins) organization. We also provide [example plugins](https://github.com/logstash-plugins?query=example).
 
 - Install dependencies
+
 ```sh
 bundle install
 ```
@@ -37,10 +38,21 @@ bundle install
 bundle install
 ```
 
-- Run tests
+- Run unit tests
 
 ```sh
 bundle exec rspec
+```
+
+- Run integration tests
+
+you'll need to have docker available within your test environment before 
+running the integration tests. The tests depend on a specific Kafka image 
+found in Docker Hub called `spotify/kafka`. You will need internet connectivity
+to pull in this image if it does not already exist locally.
+
+```sh
+bundle exec rspec --tag integration
 ```
 
 ### 2. Running your unpublished Plugin in Logstash
@@ -49,7 +61,7 @@ bundle exec rspec
 
 - Edit Logstash `Gemfile` and add the local plugin path, for example:
 ```ruby
-gem "logstash-filter-awesome", :path => "/your/local/logstash-filter-awesome"
+gem "logstash-output-kafka", :path => "/your/local/logstash-output-kafka"
 ```
 - Install plugin
 ```sh
@@ -57,7 +69,7 @@ bin/plugin install --no-verify
 ```
 - Run Logstash with your plugin
 ```sh
-bin/logstash -e 'filter {awesome {}}'
+bin/logstash -e 'output { kafka { topic_id => "kafka_topic" }}'
 ```
 At this point any modifications to the plugin code will be applied to this local Logstash setup. After modifying the plugin, simply rerun Logstash.
 
@@ -67,11 +79,11 @@ You can use the same **2.1** method to run your plugin in an installed Logstash 
 
 - Build your plugin gem
 ```sh
-gem build logstash-filter-awesome.gemspec
+gem build logstash-output-kafka.gemspec
 ```
 - Install the plugin from the Logstash home
 ```sh
-bin/plugin install /your/local/plugin/logstash-filter-awesome.gem
+bin/plugin install /your/local/plugin/logstash-output-kafka.gem
 ```
 - Start Logstash and proceed to test the plugin
 
@@ -83,4 +95,4 @@ Programming is not a required skill. Whatever you've seen about open source and 
 
 It is more important to the community that you are able to contribute.
 
-For more information about contributing, see the [CONTRIBUTING](https://github.com/elasticsearch/logstash/blob/master/CONTRIBUTING.md) file.
+For more information about contributing, see the [CONTRIBUTING](https://github.com/elastic/logstash/blob/master/CONTRIBUTING.md) file.
