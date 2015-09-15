@@ -62,7 +62,7 @@ describe "outputs/kafka", :integration => true do
       kafka = LogStash::Outputs::Kafka.new(config)
       kafka.register
       num_events.times do kafka.receive(event) end
-      kafka.teardown
+      kafka.close
     end
 
     it 'should have data integrity' do
@@ -93,7 +93,7 @@ describe "outputs/kafka", :integration => true do
       kafka = LogStash::Outputs::Kafka.new(config)
       kafka.register
       num_events.times do kafka.receive(event) end
-      kafka.teardown
+      kafka.close
     end
 
     it 'should send all events to one partition' do

@@ -143,13 +143,12 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   def receive(event)
     return unless output?(event)
     if event == LogStash::SHUTDOWN
-      finished
       return
     end
     @codec.encode(event)
   end
 
-  def teardown
+  def close
     @producer.close
   end
 end #class LogStash::Outputs::Kafka
