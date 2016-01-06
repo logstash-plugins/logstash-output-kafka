@@ -2,55 +2,22 @@
 
 require "logstash/devutils/rspec/spec_helper"
 require 'logstash/outputs/kafka'
-require 'longshoreman'
-require 'jruby-kafka'
 require 'json'
 require 'poseidon'
 
-CONTAINER_NAME = "kafka-#{rand(999).to_s}"
-IMAGE_NAME = 'spotify/kafka'
-IMAGE_TAG = 'latest'
-KAFKA_PORT = 9092
-KAFKA_VERSION = "0.8.2.1"
-KAFKA_SCALA_VERSION = "2.11"
-
-RSpec.configure do |config|
-  config.before(:all, :integration => true) do
-    @ls = begin
-            ls = Longshoreman.new
-            ls.container.get(CONTAINER_NAME)
-            ls
-          rescue Docker::Error::NotFoundError
-            Longshoreman.pull_image(IMAGE_NAME, IMAGE_TAG)
-            Longshoreman.new("#{IMAGE_NAME}:#{IMAGE_TAG}", CONTAINER_NAME,
-                             { "ENV" => [ "ADVERTISED_HOST=#{Longshoreman.new.get_host_ip}", "ADVERTISED_PORT=#{KAFKA_PORT}"],
-                               "PortBindings" => { "#{KAFKA_PORT}/tcp" => [{ "HostPort" => "#{KAFKA_PORT}" }]}})
-          end
-    @kafka_host = @ls.get_host_ip
-    @kafka_port = @ls.container.rport(9092)
-    @zk_port = @ls.container.rport(2181)
-  end
-
-  config.after(:suite) do
-    begin
-      ls = Longshoreman::new
-      ls.container.get(CONTAINER_NAME)
-      ls.cleanup
-    rescue Docker::Error::NotFoundError, Excon::Errors::SocketError
-    end
-  end
-end
-
 describe "outputs/kafka", :integration => true do
-  let(:test_topic) { 'test' }
-  let(:base_config) { {'client_id' => 'spectest', 'bootstrap_servers' => "#{@kafka_host}:#{@kafka_port}"} }
-  let(:event) { LogStash::Event.new({'message' => 'hello', '@timestamp' => LogStash::Timestamp.at(0) }) }
+  let(:kafka_host) { 'localhost' }
+  let(:kafka_port) { 9092 }
+  let(:num_events) { 10 }
+  let(:base_config) { {'client_id' => 'kafkaoutputspec'} }
+  let(:event) { LogStash::Event.new({'message' => '183.60.215.50 - - [11/Sep/2014:22:00:00 +0000] "GET /scripts/netcat-webserver HTTP/1.1" 200 182 "-" "Mozilla/5.0 (compatible; EasouSpider; +http://www.easou.com/search/spider.html)"', '@timestamp' => LogStash::Timestamp.at(0) }) }
 
 
   context 'when outputting messages' do
+    let(:test_topic) { 'topic1' }
     let(:num_events) { 3 }
     let(:consumer) do
-      Poseidon::PartitionConsumer.new("my_test_consumer", @kafka_host, @kafka_port,
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
                                       test_topic, 0, :earliest_offset)
     end
     subject do
@@ -59,45 +26,107 @@ describe "outputs/kafka", :integration => true do
 
     before :each do
       config = base_config.merge({"topic_id" => test_topic})
-      kafka = LogStash::Outputs::Kafka.new(config)
-      kafka.register
-      num_events.times do kafka.receive(event) end
-      kafka.close
+      load_kafka_data(config)
     end
 
     it 'should have data integrity' do
       expect(subject.size).to eq(num_events)
       subject.each do |m|
-        expect(m.value).to eq(event.to_json)
+        expect(m.value).to eq(event.to_s)
       end
     end
+
   end
 
   context 'when setting message_key' do
     let(:num_events) { 10 }
-    let(:test_topic) { 'test2' }
+    let(:test_topic) { 'topic2' }
     let!(:consumer0) do
-      Poseidon::PartitionConsumer.new("my_test_consumer", @kafka_host, @kafka_port,
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
                                       test_topic, 0, :earliest_offset)
     end
     let!(:consumer1) do
-      Poseidon::PartitionConsumer.new("my_test_consumer", @kafka_host, @kafka_port,
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
                                       test_topic, 1, :earliest_offset)
     end
 
     before :each do
-      command = ["/opt/kafka_#{KAFKA_SCALA_VERSION}-#{KAFKA_VERSION}/bin/kafka-topics.sh", "--create", "--topic", "#{test_topic}", "--partitions", "2", "--zookeeper", "#{@kafka_host}:#{@zk_port}", "--replication-factor", "1"]
-      @ls.container.raw.exec(command)
-
       config = base_config.merge({"topic_id" => test_topic, "message_key" => "static_key"})
-      kafka = LogStash::Outputs::Kafka.new(config)
-      kafka.register
-      num_events.times do kafka.receive(event) end
-      kafka.close
+      load_kafka_data(config)
     end
 
     it 'should send all events to one partition' do
       expect(consumer0.fetch.size == num_events || consumer1.fetch.size == num_events).to be true
     end
   end
+
+  context 'when using gzip compression' do
+    let(:test_topic) { 'gzip_topic' }
+    let!(:consumer) do
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
+                                      test_topic, 0, :earliest_offset)
+    end
+    subject do
+      consumer.fetch
+    end
+
+    before :each do
+      config = base_config.merge({"topic_id" => test_topic, "compression_type" => "gzip"})
+      load_kafka_data(config)
+    end
+
+    it 'should have data integrity' do
+      expect(subject.size).to eq(num_events)
+      subject.each do |m|
+        expect(m.value).to eq(event.to_s)
+      end
+    end
+  end
+
+  context 'when using multi partition topic' do
+    let(:num_events) { 10 }
+    let(:test_topic) { 'topic3' }
+    let!(:consumer0) do
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
+                                      test_topic, 0, :earliest_offset)
+    end
+    let!(:consumer1) do
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
+                                      test_topic, 1, :earliest_offset)
+    end
+
+    let!(:consumer2) do
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
+                                      test_topic, 2, :earliest_offset)
+    end
+
+    before :each do
+      config = base_config.merge({"topic_id" => test_topic})
+      load_kafka_data(config)
+    end
+
+    it 'should distribute events to all partition' do
+      consumer0_records = consumer0.fetch
+      consumer1_records = consumer1.fetch
+      consumer2_records = consumer2.fetch
+
+      expect(consumer0_records.size > 1 &&
+        consumer1_records.size > 1 &&
+          consumer2_records.size > 1).to be true
+
+      all_records = consumer0_records + consumer1_records + consumer2_records
+      expect(all_records.size).to eq(num_events)
+      all_records.each do |m|
+        expect(m.value).to eq(event.to_s)
+      end
+    end
+  end
+
+  def load_kafka_data(config)
+    kafka = LogStash::Outputs::Kafka.new(config)
+    kafka.register
+    num_events.times do kafka.receive(event) end
+    kafka.close
+  end
+
 end
