@@ -1,7 +1,7 @@
 require 'logstash/namespace'
 require 'logstash/outputs/base'
 require 'java'
-require 'logstash-input-kafka_jars.rb'
+require 'logstash-output-kafka_jars.rb'
 
 # Write events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on
 # the broker.
@@ -68,11 +68,6 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   # rather than immediately sending out a record the producer will wait for up to the given delay
   # to allow other records to be sent so that the sends can be batched together.
   config :linger_ms, :validate => :number, :default => 0
-  # The maximum number of unacknowledged requests the client will send on a
-  # single connection before blocking. Note that if this setting is set to be greater
-  # than 1 and there are failed sends, there is a risk of message re-ordering due
-  # to retries (i.e., if retries are enabled).
-  config :max_in_flight_requests_per_connection, :validate => :number
   # The maximum size of a request
   config :max_request_size, :validate => :number, :default => 1048576
   # The key for the message
@@ -89,7 +84,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   # for the response of a request. If the response is not received before the timeout
   # elapses the client will resend the request if necessary or fail the request if
   # retries are exhausted.
-  config :request_timeout_ms :validate => :string
+  config :request_timeout_ms, :validate => :string
   # Setting a value greater than zero will cause the client to
   # resend any record whose send fails with a potentially transient error.
   config :retries, :validate => :number, :default => 0
@@ -140,6 +135,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
     @producer.close
   end
 
+  private
   def create_producer
     begin
       props = java.util.Properties.new
@@ -153,7 +149,6 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       props.put(kafka::CLIENT_ID_CONFIG, client_id) unless client_id.nil?
       props.put(kafka::KEY_SERIALIZER_CLASS_CONFIG, key_serializer)
       props.put(kafka::LINGER_MS_CONFIG, linger_ms.to_s)
-      props.put(kafka::MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, max_in_flight_requests_per_connection.to_s)
       props.put(kafka::MAX_REQUEST_SIZE_CONFIG, max_request_size.to_s)
       props.put(kafka::RECONNECT_BACKOFF_MS_CONFIG, reconnect_backoff_ms) unless reconnect_backoff_ms.nil?
       props.put(kafka::REQUEST_TIMEOUT_MS_CONFIG, request_timeout_ms) unless request_timeout_ms.nil?

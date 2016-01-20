@@ -3,7 +3,6 @@
 require "logstash/devutils/rspec/spec_helper"
 require 'logstash/outputs/kafka'
 require 'longshoreman'
-require 'jruby-kafka'
 require 'json'
 require 'poseidon'
 
