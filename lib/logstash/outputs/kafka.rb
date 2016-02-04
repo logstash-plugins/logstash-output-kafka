@@ -16,6 +16,7 @@ require 'jruby-kafka'
 #         codec => plain {
 #            format => "%{message}"
 #         }
+#         topic => "mytopic"
 #       }
 #     }
 # For more information see http://kafka.apache.org/documentation.html#theproducer
