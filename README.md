@@ -9,6 +9,8 @@ It is fully free and fully open source. The license is Apache 2.0, meaning you a
 
 ## Documentation
 
+### Note: 3.0.0 version of this plugin will only work with Kafka version 0.9 and is not backward compatible. Older versions (< 3.0.0) will work with Kafka 0.8.x and will be continued to be maintained
+
 Logstash provides infrastructure to automatically generate documentation for this plugin. We use the asciidoc format to write documentation so any comments in the source code will be first converted into asciidoc and then into html. All plugin documentation are placed under one [central location](http://www.elastic.co/guide/en/logstash/current/).
 
 - For formatting code or config example, you can use the asciidoc `[source,ruby]` directive
