@@ -1,3 +1,14 @@
+## 3.0.0.beta1
+ - Note: breaking changes in this version, and not backward compatible with Kafka 0.8 broker. 
+   Please read carefully before installing
+ - Breaking: Changed default codec from json to plain. Json codec is really slow when used 
+   with inputs because inputs by default are single threaded. This makes it a bad
+   first user experience. Plain codec is a much better default. 
+ - Moved internal APIs to use Kafka's Java API directly instead of jruby-kafka. This
+   makes it consistent with logstash-input-kafka
+ - Breaking: Change in configuration options
+ - Added SSL options so you can connect securely to a 0.9 Kafka broker
+
 ## 2.0.2
  - [Internal] Pin jruby-kafka to v1.5
 
