@@ -100,9 +100,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   private 
   def portSuffix (hostAndPort)
-    if (hostAndPort.size > 1)
-      return ":#{hostAndPort[1]}"
-    end
+    if hostAndPort.size > 1 then ":#{hostAndPort[1]}" else nil end
   end
 
   public
