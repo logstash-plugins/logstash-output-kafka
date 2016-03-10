@@ -99,7 +99,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :retry_backoff_ms, :validate => :number, :default => 100
 
   private 
-  def portToStr (hostAndPort)
+  def portSuffix (hostAndPort)
     if (hostAndPort.size > 1)
       return ":#{hostAndPort[1]}"
     end
@@ -113,7 +113,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
     @bootstrap_servers.split(/,/).each do |server|
       hostAndPort = server.split(/:/)
       Resolv.each_address(hostAndPort[0]) do |resolved|
-        resolvedServers << "#{resolved}#{portToStr(hostAndPort)}"
+        resolvedServers << "#{resolved}#{portSuffix(hostAndPort)}"
       end
     end
     @bootstrap_servers = resolvedServers.join(",")
