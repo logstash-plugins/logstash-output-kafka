@@ -1,6 +1,7 @@
 require 'logstash/namespace'
 require 'logstash/outputs/base'
 require 'jruby-kafka'
+require 'resolv'
 
 # Write events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on
 # the broker.
@@ -97,9 +98,25 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   # The amount of time to wait before attempting to retry a failed produce request to a given topic partition.
   config :retry_backoff_ms, :validate => :number, :default => 100
 
+  private 
+  def portToStr (hostAndPort)
+    if(hostAndPort.size > 1)
+      return ":#{hostAndPort[1]}"
+    end
+  end
+
   public
   def register
     LogStash::Logger.setup_log4j(@logger)
+    
+    resolvedServers = []
+    @bootstrap_servers.split(/,/).each do |server|
+      hostAndPort = server.split(/:/)
+      Resolv.each_address(hostAndPort[0]) do |resolved|
+        resolvedServers << "#{resolved}#{portToStr(hostAndPort)}"
+      end
+    end
+    @bootstrap_servers = resolvedServers.join(",")
 
     options = {
       :key_serializer => @key_serializer,
