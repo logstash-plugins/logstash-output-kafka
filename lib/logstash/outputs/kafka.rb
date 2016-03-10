@@ -92,6 +92,17 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :retry_backoff_ms, :validate => :number, :default => 100
   # The size of the TCP send buffer to use when sending data.
   config :send_buffer_bytes, :validate => :number, :default => 131072
+  # Enable SSL/TLS secured communication to Kafka broker. Note that secure communication 
+  # is only available with a broker running v0.9 of Kafka.
+  config :ssl, :validate => :boolean, :default => false
+  # The JKS truststore path to validate the Kafka broker's certificate.
+  config :ssl_truststore_location, :validate => :path
+  # The truststore password
+  config :ssl_truststore_password, :validate => :password
+  # If client authentication is required, this setting stores the keystore path.
+  config :ssl_keystore_location, :validate => :path
+  # If client authentication is required, this setting stores the keystore password
+  config :ssl_keystore_password, :validate => :password
   # The configuration controls the maximum amount of time the server will wait for acknowledgments
   # from followers to meet the acknowledgment requirements the producer has specified with the
   # acks configuration. If the requested number of acknowledgments are not met when the timeout
@@ -156,6 +167,16 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       props.put(kafka::RETRY_BACKOFF_MS_CONFIG, retry_backoff_ms.to_s)
       props.put(kafka::SEND_BUFFER_CONFIG, send_buffer_bytes.to_s)
       props.put(kafka::VALUE_SERIALIZER_CLASS_CONFIG, value_serializer)
+      
+      if ssl
+        props.put("security.protocol", "SSL")
+        props.put("ssl.truststore.location", ssl_truststore_location)
+        props.put("ssl.truststore.password", ssl_truststore_password.value) unless ssl_truststore_password.nil?
+
+        #Client auth stuff
+        props.put("ssl.keystore.location", ssl_keystore_location) unless ssl_keystore_location.nil?
+        props.put("ssl.keystore.password", ssl_keystore_password.value) unless ssl_keystore_password.nil?
+      end
 
       org.apache.kafka.clients.producer.KafkaProducer.new(props)
     rescue => e
