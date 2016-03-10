@@ -100,7 +100,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   private 
   def portToStr (hostAndPort)
-    if(hostAndPort.size > 1)
+    if (hostAndPort.size > 1)
       return ":#{hostAndPort[1]}"
     end
   end
