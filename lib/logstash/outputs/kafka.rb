@@ -116,7 +116,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
-    unless defined? @@producer
+    if (defined?(@@producer) == nil) or @@producer.nil?
       @logger.debug('First call to the Kafka output class. Kafka producer will be created.')
       @@producer = create_producer
     end
