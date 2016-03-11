@@ -169,6 +169,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       props.put(kafka::VALUE_SERIALIZER_CLASS_CONFIG, value_serializer)
       
       if ssl
+        if ssl_truststore_location.nil?
+          raise LogStash::ConfigurationError, "ssl_truststore_location must be set when SSL is enabled"
+        end
         props.put("security.protocol", "SSL")
         props.put("ssl.truststore.location", ssl_truststore_location)
         props.put("ssl.truststore.password", ssl_truststore_password.value) unless ssl_truststore_password.nil?
@@ -181,7 +184,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       org.apache.kafka.clients.producer.KafkaProducer.new(props)
     rescue => e
       logger.error("Unable to create Kafka producer from given configuration", :kafka_error_message => e)
-      throw e
+      raise e
     end
   end
 

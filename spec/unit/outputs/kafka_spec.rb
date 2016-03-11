@@ -49,5 +49,10 @@ describe "outputs/kafka" do
       kafka.register
       kafka.receive(event)
     end
+    
+    it 'should raise config error when truststore location is not set and ssl is enabled' do
+      kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge({"ssl" => "true"}))
+      expect { kafka.register }.to raise_error(LogStash::ConfigurationError, /ssl_truststore_location must be set when SSL is enabled/)
+    end
   end
 end
