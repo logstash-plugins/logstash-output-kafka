@@ -1,3 +1,7 @@
+# 2.0.3
+ - New dependency requirements for logstash-core for the 5.0 release
+ - [Internal] Pin jruby-kafka to v2.2.2
+
 ## 2.0.2
  - [Internal] Pin jruby-kafka to v1.5
 
