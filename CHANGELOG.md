@@ -1,3 +1,5 @@
+# 2.0.3
+  - New dependency requirements for logstash-core for the 5.0 release
 ## 3.0.0.beta1
  - Note: breaking changes in this version, and not backward compatible with Kafka 0.8 broker. 
    Please read carefully before installing
