@@ -17,6 +17,7 @@ require 'logstash-output-kafka_jars.rb'
 #         codec => plain {
 #            format => "%{message}"
 #         }
+#         topic_id => "mytopic"
 #       }
 #     }
 # For more information see http://kafka.apache.org/documentation.html#theproducer

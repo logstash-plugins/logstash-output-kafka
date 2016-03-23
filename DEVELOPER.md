@@ -46,6 +46,7 @@ the output configuration something like:
             codec => plain {
                 format => "%{message}"
             }
+            topic_id => "my_topic_id"
         }
     }
     
