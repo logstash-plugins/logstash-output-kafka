@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-output-kafka'
-  s.version         = '2.0.3'
+  s.version         = '2.0.4'
   s.version         = '3.0.0.beta1'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = 'Output events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on the broker'
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.metadata = { 'logstash_plugin' => 'true', 'group' => 'output'}
 
   # Gem dependencies
-  s.add_runtime_dependency "logstash-core", ">= 2.0.0", "< 6.0.0.alpha1"
+  s.add_runtime_dependency "logstash-core-plugin-api", "~> 1.0"
   s.add_runtime_dependency 'logstash-codec-plain'
   s.add_runtime_dependency 'logstash-codec-json'
 
