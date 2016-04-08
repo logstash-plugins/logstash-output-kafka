@@ -1,7 +1,6 @@
 # Logstash Plugin
 
-[![Build
-Status](http://build-eu-00.elastic.co/view/LS%20Plugins/view/LS%20Outputs/job/logstash-plugin-output-kafka-unit/badge/icon)](http://build-eu-00.elastic.co/view/LS%20Plugins/view/LS%20Outputs/job/logstash-plugin-output-kafka-unit/)
+[![Travis Build Status](https://travis-ci.org/logstash-plugins/logstash-output-kafka.svg)](https://travis-ci.org/logstash-plugins/logstash-output-kafka)
 
 This is a plugin for [Logstash](https://github.com/elastic/logstash).
 
