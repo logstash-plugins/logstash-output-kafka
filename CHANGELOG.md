@@ -1,7 +1,10 @@
-# 2.0.4
+## 2.0.4
   - Depend on logstash-core-plugin-api instead of logstash-core, removing the need to mass update plugins on major releases of logstash
-# 2.0.3
+  - [Internal] Pin jruby-kafka to v1.6 to match input
+  
+## 2.0.3
   - New dependency requirements for logstash-core for the 5.0 release
+
 ## 3.0.0.beta1
  - Note: breaking changes in this version, and not backward compatible with Kafka 0.8 broker. 
    Please read carefully before installing
