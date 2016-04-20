@@ -69,7 +69,12 @@ gem "logstash-output-kafka", :path => "/your/local/logstash-output-kafka"
 ```
 - Install plugin
 ```sh
+# Logstash 2.3 and higher
+bin/logstah-plugin install --no-verify
+
+# Prior to Logstash 2.3
 bin/plugin install --no-verify
+
 ```
 - Run Logstash with your plugin
 ```sh
