@@ -38,7 +38,10 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :key_serializer, :validate => :string, :default => 'org.apache.kafka.common.serialization.StringSerializer'
   # Serializer class for the value of the message
   config :value_serializer, :validate => :string, :default => 'org.apache.kafka.common.serialization.StringSerializer'
-  # The key for the message
+  # The key that will be included with the record
+  #
+  # If a `message_key` is present, a partition will be chosen using a hash of the key.
+  # If not present, a partition for the message will be assigned in a round-robin fashion.
   config :message_key, :validate => :string
   # The number of acknowledgments the producer requires the leader to have received
   # before considering a request complete.
