@@ -83,6 +83,38 @@ describe "outputs/kafka", :integration => true do
     end
   end
 
+  context 'when using snappy compression' do
+    let(:test_topic) { 'snappy_topic' }
+    let!(:consumer) do
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
+                                      test_topic, 0, :earliest_offset)
+    end
+    subject do
+      consumer.fetch
+    end
+
+    before :each do
+      config = base_config.merge({"topic_id" => test_topic, "compression_type" => "snappy"})
+      load_kafka_data(config)
+    end
+
+    it 'should have data integrity' do
+      expect(subject.size).to eq(num_events)
+      subject.each do |m|
+        expect(m.value).to eq(event.to_s)
+      end
+    end
+  end
+
+  context 'when using LZ4 compression' do
+    let(:test_topic) { 'lz4_topic' }
+
+    before :each do
+      config = base_config.merge({"topic_id" => test_topic, "compression_type" => "lz4"})
+      load_kafka_data(config)
+    end
+  end
+
   context 'when using multi partition topic' do
     let(:num_events) { 10 }
     let(:test_topic) { 'topic3' }
