@@ -1,3 +1,6 @@
+## 3.0.0.beta2
+ - Internal: Update gemspec dependency
+
 ## 2.0.4
   - Depend on logstash-core-plugin-api instead of logstash-core, removing the need to mass update plugins on major releases of logstash
   - [Internal] Pin jruby-kafka to v1.6 to match input
