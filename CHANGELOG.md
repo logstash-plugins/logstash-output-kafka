@@ -1,3 +1,6 @@
+## 3.0.0.beta4
+ - Fix Log4j warnings by setting up the logger (#62)
+
 ## 3.0.0.beta3
  - Use jar dependencies
  - Fixed snappy compression issue
