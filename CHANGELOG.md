@@ -1,4 +1,6 @@
 ## 
+  - Republish all the gems under jruby.
+## 
   - Update the plugin to the version 2.0 of the plugin api, this change is required for Logstash 5.0 compatibility. See https://github.com/elastic/logstash/issues/5141
 ## 3.0.0.beta4
  - Fix Log4j warnings by setting up the logger (#62)
