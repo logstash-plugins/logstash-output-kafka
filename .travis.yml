@@ -24,6 +24,5 @@ before_install:
   topic3 --zookeeper localhost:2181
 before_script:
 - bundle exec rake vendor
-- bundle exec rake install_jars
 script: bundle exec rspec && bundle exec rspec --tag integration
 jdk: oraclejdk8
