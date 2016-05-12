@@ -1,3 +1,6 @@
+## 3.0.0
+ - GA release to support Kafka 0.9 for LS 2.x
+
 ## 3.0.0.beta4
  - Fix Log4j warnings by setting up the logger (#62)
 
