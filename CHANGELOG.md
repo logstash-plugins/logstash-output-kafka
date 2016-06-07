@@ -1,3 +1,5 @@
+## 5.0.0
+  - Kafka 0.10 broker producer
 ## 4.0.0
   - Republish all the gems under jruby.
   - Update the plugin to the version 2.0 of the plugin api, this change is required for Logstash 5.0 compatibility. See https://github.com/elastic/logstash/issues/5141

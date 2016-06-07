@@ -93,8 +93,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :retry_backoff_ms, :validate => :number, :default => 100
   # The size of the TCP send buffer to use when sending data.
   config :send_buffer_bytes, :validate => :number, :default => 131072
-  # Enable SSL/TLS secured communication to Kafka broker. Note that secure communication 
-  # is only available with a broker running v0.9 of Kafka.
+  # Enable SSL/TLS secured communication to Kafka broker.
   config :ssl, :validate => :boolean, :default => false
   # The JKS truststore path to validate the Kafka broker's certificate.
   config :ssl_truststore_location, :validate => :path
@@ -117,8 +116,6 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
-    LogStash::Logger.setup_log4j(@logger)
-    
     @producer = create_producer
     @codec.on_event do |event, data|
       begin
@@ -170,7 +167,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       props.put(kafka::RETRY_BACKOFF_MS_CONFIG, retry_backoff_ms.to_s)
       props.put(kafka::SEND_BUFFER_CONFIG, send_buffer_bytes.to_s)
       props.put(kafka::VALUE_SERIALIZER_CLASS_CONFIG, value_serializer)
-      
+
       if ssl
         if ssl_truststore_location.nil?
           raise LogStash::ConfigurationError, "ssl_truststore_location must be set when SSL is enabled"
