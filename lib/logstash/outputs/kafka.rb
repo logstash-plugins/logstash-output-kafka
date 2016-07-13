@@ -128,6 +128,8 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :topic_id, :validate => :string, :required => true
   # Serializer class for the value of the message
   config :value_serializer, :validate => :string, :default => 'org.apache.kafka.common.serialization.StringSerializer'
+  
+  @@producer = nil
 
   public
   def register
