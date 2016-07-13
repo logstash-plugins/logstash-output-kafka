@@ -131,7 +131,10 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
-    @producer = create_producer
+    if (defined?(@@producer) == nil) or @@producer.nil?
+      @logger.debug('First call to the Kafka output class. Kafka producer will be created.')
+      @@producer = create_producer
+    end
     @codec.on_event do |event, data|
       begin
         if @message_key.nil?
@@ -139,7 +142,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         else
           record = org.apache.kafka.clients.producer.ProducerRecord.new(event.sprintf(@topic_id), event.sprintf(@message_key), data)
         end
-        @producer.send(record)
+        @@producer.send(record)
       rescue LogStash::ShutdownSignal
         @logger.info('Kafka producer got shutdown signal')
       rescue => e
@@ -158,7 +161,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   end
 
   def close
-    @producer.close
+    @@producer.close
   end
 
   private
