@@ -131,7 +131,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
-    @producer = create_producer
+    @producer = create_producer if @producer.nil?
     @codec.on_event do |event, data|
       begin
         if @message_key.nil?
