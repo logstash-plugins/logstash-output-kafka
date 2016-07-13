@@ -5,6 +5,21 @@ require 'jruby-kafka'
 # Write events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on
 # the broker.
 #
+# Here's a compatibility matrix that shows the Kafka broker and client versions that are compatible with each combination
+# of Logstash and the Kafka output plugin: 
+# 
+# [options="header"]
+# |==========================================================
+# |Kafka Broker Version |Kafka Client Version |Logstash Version |Plugin Version |Why?
+# |0.8       |0.8       |2.0.0 - 2.x.x   |<3.0.0 |Legacy, 0.8 is still popular 
+# |0.9       |0.9       |2.0.0 - 2.3.x   | 3.x.x |Works with the old Ruby Event API (`event['product']['price'] = 10`)  
+# |0.9       |0.9       |2.4.0 - 5.0.x   | 4.x.x |Works with the new getter/setter APIs (`event.set('[product][price]', 10)`)
+# |0.10      |0.10      |2.4.0 - 5.0.x   | 5.x.x |Not compatible with the 0.9 broker 
+# |==========================================================
+# 
+# NOTE: It's a good idea to upgrade brokers before consumers/producers because brokers target backwards compatibility.
+# For example, the 0.9 broker will work with both the 0.8 consumer and 0.9 consumer APIs, but not the other way around.
+#
 # The only required configuration is the topic name. The default codec is json,
 # so events will be persisted on the broker in json format. If you select a codec of plain,
 # Logstash will encode your messages with not only the message but also with a timestamp and
