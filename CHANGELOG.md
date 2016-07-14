@@ -1,3 +1,6 @@
+## 5.0.1
+  - Relax constraint on logstash-core-plugin-api to >= 1.60 <= 2.99
+
 ## 5.0.0
   - Kafka 0.10 broker producer
 ## 4.0.0
