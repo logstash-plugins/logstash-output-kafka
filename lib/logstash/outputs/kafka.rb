@@ -160,7 +160,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   end
 
   def close
-    @producer_factory.release_producer(producer)
+    @producer_factory.release_producer(@producer)
   end
 
   private
