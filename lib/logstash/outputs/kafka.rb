@@ -24,6 +24,8 @@ require 'logstash-output-kafka_jars.rb'
 #
 # Kafka producer configuration: http://kafka.apache.org/documentation.html#newproducerconfigs
 class LogStash::Outputs::Kafka < LogStash::Outputs::Base
+  declare_threadsafe!
+
   config_name 'kafka'
 
   default :codec, 'plain'

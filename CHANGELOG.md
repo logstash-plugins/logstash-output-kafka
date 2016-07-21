@@ -1,3 +1,7 @@
+## 3.0.2
+
+ - Declare plugin as threadsafe
+
 ## 3.0.1
  - Revert back to not configuring log4j here in this plugin. This setup method used will hardcode log4j setting which means you cannot 
    configure it. Its better to add log4j.properties in LS_HOME/bin, add it to classpath to silence warnings.
