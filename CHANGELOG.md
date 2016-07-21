@@ -1,3 +1,9 @@
+# 2.0.6
+ - declare plugin as threadsafe
+
+# 2.0.5
+ - [Internal] Revert to jruby-kafka to v1.5
+
 # 2.0.4
  - [Internal] Pin jruby-kafka to v1.6 to match input
 
