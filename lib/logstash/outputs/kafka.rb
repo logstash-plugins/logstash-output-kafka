@@ -21,7 +21,7 @@ require 'logstash-output-kafka_jars.rb'
 # NOTE: It's a good idea to upgrade brokers before consumers/producers because brokers target backwards compatibility.
 # For example, the 0.9 broker will work with both the 0.8 consumer and 0.9 consumer APIs, but not the other way around.
 #
-# The only required configuration is the topic name. The default codec is json,
+# The only required configuration is the topic_id. The default codec is json,
 # so events will be persisted on the broker in json format. If you select a codec of plain,
 # Logstash will encode your messages with not only the message but also with a timestamp and
 # hostname. If you do not want anything but your message passing through, you should make the output
