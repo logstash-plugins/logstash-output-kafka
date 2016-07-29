@@ -1,6 +1,7 @@
 require 'logstash/namespace'
 require 'logstash/outputs/base'
 require 'java'
+require 'logstash/outputs/kafka_producer_factory'
 require 'logstash-output-kafka_jars.rb'
 
 # Write events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on
@@ -133,6 +134,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
+    @producer_factory = LogStash::Outputs::KafkaProducerFactory.instance 
     @producer = create_producer
     @codec.on_event do |event, data|
       begin
@@ -160,7 +162,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   end
 
   def close
-    @producer.close
+    @producer_factory.release_producer(@producer)
   end
 
   private
@@ -198,7 +200,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         props.put("ssl.keystore.password", ssl_keystore_password.value) unless ssl_keystore_password.nil?
       end
 
-      org.apache.kafka.clients.producer.KafkaProducer.new(props)
+      @producer_factory.hold_producer(props)
     rescue => e
       logger.error("Unable to create Kafka producer from given configuration", :kafka_error_message => e)
       raise e
