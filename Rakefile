@@ -14,3 +14,4 @@ task :install_jars do
   Jars::Installer.new.vendor_jars!(false)
 end
 
+task :vendor => :install_jars
