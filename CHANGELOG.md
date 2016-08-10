@@ -1,3 +1,6 @@
+## 5.0.3
+  - 5.0.2 was missing the java jars
+
 ## 5.0.2
   - Declare plugin as threadsafe
 
