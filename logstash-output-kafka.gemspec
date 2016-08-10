@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-output-kafka'
-  s.version         = '5.0.2'
+  s.version         = '5.0.3'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = 'Output events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on the broker'
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   # Files
-  s.files = Dir['lib/**/*','spec/**/*','vendor/**/*','*.gemspec','*.md','CONTRIBUTORS','Gemfile','LICENSE','NOTICE.TXT']
+  s.files = Dir['lib/**/*.rb','spec/**/*','vendor/**/*','*.gemspec','*.md','CONTRIBUTORS','Gemfile','LICENSE','NOTICE.TXT']
 
   # Tests
   s.test_files = s.files.grep(%r{^(test|spec|features)/})
