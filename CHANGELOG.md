@@ -1,3 +1,6 @@
+## 5.0.3
+  - Internal: Gem cleanup
+
 ## 5.0.2
   - Declare plugin as threadsafe
 
