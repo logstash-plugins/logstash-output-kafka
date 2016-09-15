@@ -144,7 +144,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         end
         @producer.send(record)
       rescue LogStash::ShutdownSignal
-        @logger.info('Kafka producer got shutdown signal')
+        @logger.debug('Kafka producer got shutdown signal')
       rescue => e
         @logger.warn('kafka producer threw exception, restarting',
                      :exception => e)
