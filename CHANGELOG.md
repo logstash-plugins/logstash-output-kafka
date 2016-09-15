@@ -1,3 +1,6 @@
+## 5.0.5
+  - Fix logging
+
 ## 5.0.4
   - Update to 0.10.0.1
 
