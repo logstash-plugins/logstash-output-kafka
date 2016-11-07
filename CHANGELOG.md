@@ -1,4 +1,7 @@
-## 4.0.0
+## 4.0.2
+  - Internal: fixed LS's logger log4j comatibility for LS 5.0
+
+## 4.0.0/4.0.1
   - Republish all the gems under jruby.
   - Update the plugin to the version 2.0 of the plugin api, this change is required for Logstash 5.0 compatibility. See https://github.com/elastic/logstash/issues/5141
   
