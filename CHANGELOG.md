@@ -1,3 +1,6 @@
+## 6.0.0
+  - BREAKING: update to 0.10.1.0 client protocol. not backwards compatible with 5.0 (protocol versions <= 10.0.0.1)
+
 ## 5.0.5
   - Fix logging
 
