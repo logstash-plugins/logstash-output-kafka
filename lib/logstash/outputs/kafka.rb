@@ -117,8 +117,6 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
-    LogStash::Logger.setup_log4j(@logger)
-    
     @producer = create_producer
     @codec.on_event do |event, data|
       begin
