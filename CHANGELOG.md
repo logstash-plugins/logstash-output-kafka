@@ -1,3 +1,6 @@
+## 4.0.3
+  - Internal: vendoring issue when bundling gem
+
 ## 4.0.2
   - Internal: fixed LS's logger log4j comatibility for LS 5.0
 
