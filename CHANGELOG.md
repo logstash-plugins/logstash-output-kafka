@@ -1,3 +1,6 @@
+## 4.0.4
+  - Relax constraint on logstash-core-plugin-api to >= 1.60 <= 2.99
+
 ## 4.0.3
   - Internal: vendoring issue when bundling gem
 
@@ -7,7 +10,7 @@
 ## 4.0.0/4.0.1
   - Republish all the gems under jruby.
   - Update the plugin to the version 2.0 of the plugin api, this change is required for Logstash 5.0 compatibility. See https://github.com/elastic/logstash/issues/5141
-  
+
 ## 3.0.0
  - GA release of Kafka Output to support 0.9 broker
 
@@ -24,16 +27,16 @@
 ## 2.0.4
   - Depend on logstash-core-plugin-api instead of logstash-core, removing the need to mass update plugins on major releases of logstash
   - [Internal] Pin jruby-kafka to v1.6 to match input
-  
+
 ## 2.0.3
   - New dependency requirements for logstash-core for the 5.0 release
 
 ## 3.0.0.beta1
- - Note: breaking changes in this version, and not backward compatible with Kafka 0.8 broker. 
+ - Note: breaking changes in this version, and not backward compatible with Kafka 0.8 broker.
    Please read carefully before installing
- - Breaking: Changed default codec from json to plain. Json codec is really slow when used 
+ - Breaking: Changed default codec from json to plain. Json codec is really slow when used
    with inputs because inputs by default are single threaded. This makes it a bad
-   first user experience. Plain codec is a much better default. 
+   first user experience. Plain codec is a much better default.
  - Moved internal APIs to use Kafka's Java API directly instead of jruby-kafka. This
    makes it consistent with logstash-input-kafka
  - Breaking: Change in configuration options
@@ -43,7 +46,7 @@
  - [Internal] Pin jruby-kafka to v1.5
 
 ## 2.0.0
- - Plugins were updated to follow the new shutdown semantic, this mainly allows Logstash to instruct input plugins to terminate gracefully, 
+ - Plugins were updated to follow the new shutdown semantic, this mainly allows Logstash to instruct input plugins to terminate gracefully,
    instead of using Thread.raise on the plugins' threads. Ref: https://github.com/elastic/logstash/pull/3895
  - Dependency on logstash-core update to 2.0
 
