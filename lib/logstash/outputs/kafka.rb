@@ -241,6 +241,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   end
 
   def set_trustore_keystore_config(props)
+    if ssl_truststore_location.nil?
+      raise LogStash::ConfigurationError, "ssl_truststore_location must be set when SSL is enabled"
+    end
     props.put("ssl.truststore.type", ssl_truststore_type) unless ssl_truststore_type.nil?
     props.put("ssl.truststore.location", ssl_truststore_location)
     props.put("ssl.truststore.password", ssl_truststore_password.value) unless ssl_truststore_password.nil?
