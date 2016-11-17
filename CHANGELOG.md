@@ -1,3 +1,6 @@
+## 5.1.0
+  - Add Kerberos authentication feature.
+
 ## 5.0.5
   - Fix logging
 
