@@ -1,3 +1,6 @@
+## 5.1.1
+  - Update the doc to mention the plain codec instead of the json codec.
+
 ## 5.1.0
   - Add Kerberos authentication feature.
 
