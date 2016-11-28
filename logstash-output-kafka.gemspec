@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-output-kafka'
-  s.version         = '5.1.1'
+  s.version         = '5.1.2'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = 'Output events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on the broker'
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.metadata = { 'logstash_plugin' => 'true', 'group' => 'output'}
 
   s.requirements << "jar 'org.apache.kafka:kafka-clients', '0.10.0.1'"
-  s.requirements << "jar 'org.slf4j:slf4j-log4j12', '1.7.13'"
+  s.requirements << "jar 'org.slf4j:slf4j-log4j12', '1.7.21'"
 
   s.add_development_dependency 'jar-dependencies', '~> 0.3.2'
 
