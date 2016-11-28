@@ -13,10 +13,10 @@ require 'logstash-output-kafka_jars.rb'
 # |==========================================================
 # |Kafka Client Version |Logstash Version |Plugin Version |Security Features |Why?
 # |0.8       |2.0.0 - 2.x.x   |<3.0.0 | |Legacy, 0.8 is still popular 
-# |0.9       |2.0.0 - 2.3.x   | 3.x.x |Basic Auth, SSL |Works with the old Ruby Event API (`event['product']['price'] = 10`)
-# |0.9       |2.4.0 - 5.0.x   | 4.x.x |Basic Auth, SSL |Works with the new getter/setter APIs (`event.set('[product][price]', 10)`)
-# |0.10.0.x  |2.4.0 - 5.0.x   | 5.x.x |Basic Auth, SSL |Not compatible with the <= 0.9 broker
-# |0.10.1.x  |2.4.0 - 5.0.x   | 6.x.x |Basic Auth, SSL |Not compatible with <= 0.10.0.x broker
+# |0.9       |2.0.0 - 2.3.x   | 3.x.x |SSL |Works with the old Ruby Event API (`event['product']['price'] = 10`)
+# |0.9       |2.4.0 - 5.0.x   | 4.x.x |SSL |Works with the new getter/setter APIs (`event.set('[product][price]', 10)`)
+# |0.10.0.x  |2.4.0 - 5.0.x   | 5.x.x |SSL |Not compatible with the <= 0.9 broker
+# |0.10.1.x  |2.4.0 - 5.0.x   | 6.x.x |SSL |Not compatible with <= 0.10.0.x broker
 # |==========================================================
 #
 # NOTE: We recommended that you use matching Kafka client and broker versions. During upgrades, you should
@@ -24,10 +24,9 @@ require 'logstash-output-kafka_jars.rb'
 # is compatible with both the 0.8 consumer and 0.9 consumer APIs, but not the other way around.
 #
 # The only required configuration is the topic_id. The default codec is plain,
-# so events will be persisted on the broker in plain format. If you select a codec of plain,
-# Logstash will encode your messages with not only the message but also with a timestamp and
-# hostname. If you do not want anything but your message passing through, you should make the output
-# configuration something like:
+# so events will be persisted on the broker in plain format. Logstash will encode your messages with not 
+# only the message but also with a timestamp and hostname. If you do not want anything but your message 
+# passing through, you should make the output configuration something like:
 # [source,ruby]
 #     output {
 #       kafka {
