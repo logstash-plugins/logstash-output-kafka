@@ -1,8 +1,11 @@
+## 5.1.3
+  - Docs: Clarify compatibility matrix and remove it from the changelog to avoid duplication.
+
 ## 5.1.2
   - bump sl4j version dep to 1.7.21 to align with input plugin and kafka-clients maven deps
 
 ## 5.1.1
-  - Update the doc to mention the plain codec instead of the json codec.
+  - Docs: Update the doc to mention the plain codec instead of the json codec.
 
 ## 5.1.0
   - Add Kerberos authentication feature.
