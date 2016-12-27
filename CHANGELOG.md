@@ -1,3 +1,6 @@
+## 6.1.2
+  - bump kafka dependency to 0.10.1.1
+
 ## 6.1.1
   - Docs: Clarify compatibility matrix and remove it from the changelog to avoid duplication.
 
