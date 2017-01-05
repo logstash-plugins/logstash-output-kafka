@@ -1,3 +1,6 @@
+## 6.1.3
+  - Docs: Update Kafka compatibility matrix
+  
 ## 6.1.2
   - bump kafka dependency to 0.10.1.1
 
