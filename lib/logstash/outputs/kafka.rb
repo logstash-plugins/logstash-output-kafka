@@ -11,16 +11,23 @@ require 'logstash-output-kafka_jars.rb'
 # 
 # [options="header"]
 # |==========================================================
-# |Kafka Client Version |Logstash Version |Plugin Version |Security Features |Why?
-# |0.8       |2.0.0 - 2.x.x   |<3.0.0 | |Legacy, 0.8 is still popular 
-# |0.9       |2.0.0 - 2.3.x   | 3.x.x |SSL |Works with the old Ruby Event API (`event['product']['price'] = 10`)
-# |0.9       |2.4.x - 5.x.x   | 4.x.x |SSL |Works with the new getter/setter APIs (`event.set('[product][price]', 10)`)
-# |0.10.0.x  |2.4.x - 5.x.x   | 5.x.x |SSL |Not compatible with the <= 0.9 broker
+# |Kafka Client Version |Logstash Version |Plugin Version |Why?
+# |0.8       |2.0.0 - 2.x.x   |<3.0.0 |Legacy, 0.8 is still popular 
+# |0.9       |2.0.0 - 2.3.x   | 3.x.x |Works with the old Ruby Event API (`event['product']['price'] = 10`)
+# |0.9       |2.4.x - 5.x.x   | 4.x.x |Works with the new getter/setter APIs (`event.set('[product][price]', 10)`)
+# |0.10.0.x  |2.4.x - 5.x.x   | 5.x.x |Not compatible with the <= 0.9 broker
 # |==========================================================
 # 
 # NOTE: We recommended that you use matching Kafka client and broker versions. During upgrades, you should
 # upgrade brokers before clients because brokers target backwards compatibility. For example, the 0.9 broker
 # is compatible with both the 0.8 consumer and 0.9 consumer APIs, but not the other way around.
+#
+# This output supports connecting to Kafka over:
+#
+# * SSL (requires plugin version 3.0.0 or later)
+# * Kerberos SASL (requires plugin version 5.1.0 or later)
+#
+# By default security is disabled but can be turned on as needed.
 #
 # The only required configuration is the topic_id. The default codec is plain,
 # so events will be persisted on the broker in json format. If you select a codec of plain,
