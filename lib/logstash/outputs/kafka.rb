@@ -208,6 +208,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   private
   def create_producer
     begin
+      # For backward compatibility
+      security_protocol = "SSL" if ssl
+      
       props = java.util.Properties.new
       kafka = org.apache.kafka.clients.producer.ProducerConfig
 
@@ -229,7 +232,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
       props.put("security.protocol", security_protocol) unless security_protocol.nil?
 
-      if security_protocol == "SSL" || ssl
+      if security_protocol == "SSL"
         set_trustore_keystore_config(props)
       elsif security_protocol == "SASL_PLAINTEXT"
         set_sasl_config(props)
