@@ -1,3 +1,6 @@
+## 6.1.4
+  - Fix a bug where consumer was not correctly setup when `SASL_SSL` option was specified.
+
 ## 6.1.3
   - Docs: Update Kafka compatibility matrix
   
