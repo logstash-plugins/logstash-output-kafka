@@ -209,7 +209,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   def create_producer
     begin
       # For backward compatibility
-      security_protocol = "SSL" if ssl
+      security_protocol = "SSL" if ssl and security_protocol.nil?
       
       props = java.util.Properties.new
       kafka = org.apache.kafka.clients.producer.ProducerConfig
