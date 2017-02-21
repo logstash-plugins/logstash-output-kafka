@@ -98,6 +98,10 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :max_request_size, :validate => :number, :default => 1048576
   # The key for the message
   config :message_key, :validate => :string
+  # The timestamp for the message. This can either be:
+  #  - a field containing a timestamp value
+  #  - an sprintf-style field containing a timestamp value
+  config :message_timestamp, :validate => :string
   # the timeout setting for initial metadata request to fetch topic metadata.
   config :metadata_fetch_timeout_ms, :validate => :number, :default => 60000
   # the max time in milliseconds before a metadata refresh is forced.
@@ -178,11 +182,19 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
     @producer = create_producer
     @codec.on_event do |event, data|
       begin
-        if @message_key.nil?
-          record = org.apache.kafka.clients.producer.ProducerRecord.new(event.sprintf(@topic_id), data)
-        else
-          record = org.apache.kafka.clients.producer.ProducerRecord.new(event.sprintf(@topic_id), event.sprintf(@message_key), data)
+        partition = nil
+        key = event.sprintf(@message_key) unless @message_key.nil?
+
+        timestamp = nil
+        unless @message_timestamp.nil?
+          if event.include? @message_timestamp
+            timestamp = event.get(@message_timestamp).to_i
+          else
+            timestamp = event.sprintf(@message_timestamp).to_i
+          end
         end
+
+        record = org.apache.kafka.clients.producer.ProducerRecord.new(event.sprintf(@topic_id), partition, timestamp, key, data)
         @producer.send(record)
       rescue LogStash::ShutdownSignal
         @logger.debug('Kafka producer got shutdown signal')

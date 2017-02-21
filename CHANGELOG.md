@@ -1,3 +1,6 @@
+## 6.1.5
+  - Add ability to specify message timestamp (#124)
+
 ## 6.1.4
   - Fix a bug where consumer was not correctly setup when `SASL_SSL` option was specified.
 
