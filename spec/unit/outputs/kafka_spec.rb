@@ -50,7 +50,7 @@ describe "outputs/kafka" do
       kafka.receive(event)
     end
 
-    it 'should support timestamp from specified message field' do
+    it 'should support timestamp from main @timestamp field' do
       expect(org.apache.kafka.clients.producer.ProducerRecord).to receive(:new)
         .with("test", nil, event.get('@timestamp').time.to_i, nil, event.to_s)
       expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
@@ -59,7 +59,16 @@ describe "outputs/kafka" do
       kafka.receive(event)
     end
 
-    it 'should support field referenced message_timestamp' do
+    it 'should support timestamp from specified message field with long value' do
+      expect(org.apache.kafka.clients.producer.ProducerRecord).to receive(:new)
+        .with("test", nil, event.get('other_timestamp').to_i, nil, event.to_s)
+      expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+      kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge({"message_timestamp" => "other_timestamp"}))
+      kafka.register
+      kafka.receive(event)
+    end
+
+    it 'should support field referenced by message_timestamp' do
       expect(org.apache.kafka.clients.producer.ProducerRecord).to receive(:new)
         .with("test", nil, event.get('other_timestamp').to_i, nil, event.to_s)
       expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
