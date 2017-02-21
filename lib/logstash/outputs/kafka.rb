@@ -188,7 +188,8 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         timestamp = nil
         unless @message_timestamp.nil?
           if event.include? @message_timestamp
-            timestamp = event.get(@message_timestamp).to_i
+            ts = event.get(@message_timestamp)
+            timestamp = ts.is_a?(LogStash::Timestamp) ? ts.time.to_i : ts.to_i
           else
             timestamp = event.sprintf(@message_timestamp).to_i
           end
