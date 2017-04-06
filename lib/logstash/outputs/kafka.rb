@@ -270,7 +270,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       raise LogStash::ConfigurationError, "sasl_kerberos_service_name must be specified when SASL mechanism is GSSAPI"
     end
 
-    props.put("sasl.kerberos.service.name",sasl_kerberos_service_name)
+    props.put("sasl.kerberos.service.name",sasl_kerberos_service_name) unless sasl_kerberos_service_name.nil?
   end
 
 end #class LogStash::Outputs::Kafka
