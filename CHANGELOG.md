@@ -1,3 +1,6 @@
+## 5.1.6
+  - Fix a bug when SASL_SSL+PLAIN (no Kerberos) was specified.
+
 ## 5.1.5
   - Fix a bug where consumer was not correctly setup when `SASL_SSL` option was specified.
 
