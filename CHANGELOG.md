@@ -1,3 +1,6 @@
+## 6.1.5
+  - Fix a NPE when SASL_SSL+PLAIN (no Kerberos) was specified.
+
 ## 6.1.4
   - Fix a bug where consumer was not correctly setup when `SASL_SSL` option was specified.
 
