@@ -172,10 +172,12 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :topic_id, :validate => :string, :required => true
   # Serializer class for the value of the message
   config :value_serializer, :validate => :string, :default => 'org.apache.kafka.common.serialization.StringSerializer'
+  
+  @@producer = nil
 
   public
   def register
-    @producer = create_producer
+    @@producer = create_producer if @@producer.nil?
     @codec.on_event do |event, data|
       begin
         if @message_key.nil?
@@ -183,7 +185,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         else
           record = org.apache.kafka.clients.producer.ProducerRecord.new(event.sprintf(@topic_id), event.sprintf(@message_key), data)
         end
-        @producer.send(record)
+        @@producer.send(record)
       rescue LogStash::ShutdownSignal
         @logger.debug('Kafka producer got shutdown signal')
       rescue => e
@@ -202,7 +204,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   end
 
   def close
-    @producer.close
+    @@producer.close
   end
 
   private
