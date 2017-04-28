@@ -1,3 +1,6 @@
+## 6.1.6
+  - bring back log4j1.x compatibility
+
 ## 6.1.5
   - Fix a NPE when SASL_SSL+PLAIN (no Kerberos) was specified.
 
