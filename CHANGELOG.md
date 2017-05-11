@@ -1,3 +1,6 @@
+## 6.1.7
+  - bump kafka dependency to 0.10.2.1
+
 ## 6.1.6
   - bring back log4j1.x compatibility
 
