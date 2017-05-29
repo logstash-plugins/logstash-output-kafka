@@ -7,12 +7,12 @@ require 'logstash-output-kafka_jars.rb'
 # the broker.
 #
 # Here's a compatibility matrix that shows the Kafka client versions that are compatible with each combination
-# of Logstash and the Kafka output plugin: 
-# 
+# of Logstash and the Kafka output plugin:
+#
 # [options="header"]
 # |==========================================================
 # |Kafka Client Version |Logstash Version |Plugin Version |Why?
-# |0.8       |2.0.0 - 2.x.x   |<3.0.0 |Legacy, 0.8 is still popular 
+# |0.8       |2.0.0 - 2.x.x   |<3.0.0 |Legacy, 0.8 is still popular
 # |0.9       |2.0.0 - 2.3.x   | 3.x.x |Works with the old Ruby Event API (`event['product']['price'] = 10`)
 # |0.9       |2.4.x - 5.x.x   | 4.x.x |Works with the new getter/setter APIs (`event.set('[product][price]', 10)`)
 # |0.10.0.x  |2.4.x - 5.x.x   | 5.x.x |Not compatible with the <= 0.9 broker
@@ -31,8 +31,8 @@ require 'logstash-output-kafka_jars.rb'
 # By default security is disabled but can be turned on as needed.
 #
 # The only required configuration is the topic_id. The default codec is plain,
-# so events will be persisted on the broker in plain format. Logstash will encode your messages with not 
-# only the message but also with a timestamp and hostname. If you do not want anything but your message 
+# so events will be persisted on the broker in plain format. Logstash will encode your messages with not
+# only the message but also with a timestamp and hostname. If you do not want anything but your message
 # passing through, you should make the output configuration something like:
 # [source,ruby]
 #     output {
@@ -136,14 +136,14 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :ssl_key_password, :validate => :password
   # Security protocol to use, which can be either of PLAINTEXT,SSL,SASL_PLAINTEXT,SASL_SSL
   config :security_protocol, :validate => ["PLAINTEXT", "SSL", "SASL_PLAINTEXT", "SASL_SSL"], :default => "PLAINTEXT"
-  # http://kafka.apache.org/documentation.html#security_sasl[SASL mechanism] used for client connections. 
+  # http://kafka.apache.org/documentation.html#security_sasl[SASL mechanism] used for client connections.
   # This may be any mechanism for which a security provider is available.
   # GSSAPI is the default mechanism.
   config :sasl_mechanism, :validate => :string, :default => "GSSAPI"
-  # The Kerberos principal name that Kafka broker runs as. 
+  # The Kerberos principal name that Kafka broker runs as.
   # This can be defined either in Kafka's JAAS config or in Kafka's config.
   config :sasl_kerberos_service_name, :validate => :string
-  # The Java Authentication and Authorization Service (JAAS) API supplies user authentication and authorization 
+  # The Java Authentication and Authorization Service (JAAS) API supplies user authentication and authorization
   # services for Kafka. This setting provides the path to the JAAS file. Sample JAAS file for Kafka client:
   # [source,java]
   # ----------------------------------
@@ -155,9 +155,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   #   };
   # ----------------------------------
   #
-  # Please note that specifying `jaas_path` and `kerberos_config` in the config file will add these 
-  # to the global JVM system properties. This means if you have multiple Kafka inputs, all of them would be sharing the same 
-  # `jaas_path` and `kerberos_config`. If this is not desirable, you would have to run separate instances of Logstash on 
+  # Please note that specifying `jaas_path` and `kerberos_config` in the config file will add these
+  # to the global JVM system properties. This means if you have multiple Kafka inputs, all of them would be sharing the same
+  # `jaas_path` and `kerberos_config`. If this is not desirable, you would have to run separate instances of Logstash on
   # different JVM instances.
   config :jaas_path, :validate => :path
   # Optional path to kerberos config file. This is krb5.conf style as detailed in https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html
