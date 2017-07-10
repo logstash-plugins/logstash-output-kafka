@@ -1,3 +1,6 @@
+## 6.2.2
+  - bump kafka dependency to 0.11.0.0
+
 ## 6.2.0
   - bump kafka dependency to 0.10.2.1
 
