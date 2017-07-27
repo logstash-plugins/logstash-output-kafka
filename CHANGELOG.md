@@ -1,3 +1,6 @@
+## 7.0.0
+  - Breaking: mark deprecated `block_on_buffer_full`, `ssl` and `timeout_ms` options as obsolete
+
 ## 6.2.2
   - bump kafka dependency to 0.11.0.0
 
