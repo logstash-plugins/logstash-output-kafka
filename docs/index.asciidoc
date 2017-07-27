@@ -136,17 +136,6 @@ The producer will attempt to batch records together into fewer requests whenever
 records are being sent to the same partition. This helps performance on both the client
 and the server. This configuration controls the default batch size in bytes.
 
-[id="plugins-{type}s-{plugin}-block_on_buffer_full"]
-===== `block_on_buffer_full`  (DEPRECATED)
-
-  * DEPRECATED WARNING: This configuration item is deprecated and may not be available in future versions.
-  * Value type is <<boolean,boolean>>
-  * Default value is `true`
-
-When our memory buffer is exhausted we must either stop accepting new
-records (block) or throw errors. By default this setting is true and we block,
-however in some scenarios blocking is not desirable and it is better to immediately give an error.
-
 [id="plugins-{type}s-{plugin}-bootstrap_servers"]
 ===== `bootstrap_servers` 
 
@@ -350,15 +339,6 @@ Security protocol to use, which can be either of PLAINTEXT,SSL,SASL_PLAINTEXT,SA
 
 The size of the TCP send buffer to use when sending data.
 
-[id="plugins-{type}s-{plugin}-ssl"]
-===== `ssl`  (DEPRECATED)
-
-  * DEPRECATED WARNING: This configuration item is deprecated and may not be available in future versions.
-  * Value type is <<boolean,boolean>>
-  * Default value is `false`
-
-Enable SSL/TLS secured communication to Kafka broker.
-
 [id="plugins-{type}s-{plugin}-ssl_key_password"]
 ===== `ssl_key_password` 
 
@@ -414,19 +394,6 @@ The truststore password
   * There is no default value for this setting.
 
 The truststore type.
-
-[id="plugins-{type}s-{plugin}-timeout_ms"]
-===== `timeout_ms`  (DEPRECATED)
-
-  * DEPRECATED WARNING: This configuration item is deprecated and may not be available in future versions.
-  * Value type is <<number,number>>
-  * Default value is `30000`
-
-The configuration controls the maximum amount of time the server will wait for acknowledgments
-from followers to meet the acknowledgment requirements the producer has specified with the
-acks configuration. If the requested number of acknowledgments are not met when the timeout
-elapses an error will be returned. This timeout is measured on the server side and does not
-include the network latency of the request.
 
 [id="plugins-{type}s-{plugin}-topic_id"]
 ===== `topic_id` 
