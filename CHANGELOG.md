@@ -1,3 +1,6 @@
+## 7.0.2
+  - Docs: Fix misleading info about the default codec
+
 ## 7.0.1
   - Fix some documentation issues
 
