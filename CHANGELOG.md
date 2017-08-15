@@ -1,3 +1,6 @@
+## 7.0.1
+  - Fix some documentation issues
+
 ## 7.0.0
   - Breaking: mark deprecated `block_on_buffer_full`, `ssl` and `timeout_ms` options as obsolete
 
