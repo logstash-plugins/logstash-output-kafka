@@ -2,3 +2,5 @@
 Gemfile.lock
 .bundle
 .idea/
+vendor
+*.jar
