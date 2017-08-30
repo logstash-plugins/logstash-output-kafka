@@ -48,19 +48,19 @@ This output supports connecting to Kafka over:
 
 By default security is disabled but can be turned on as needed.
 
-The only required configuration is the topic_id. The default codec is plain,
-so events will be persisted on the broker in plain format. Logstash will encode your messages with not 
-only the message but also with a timestamp and hostname. If you do not want anything but your message 
-passing through, you should make the output configuration something like:
+The only required configuration is the topic_id. 
+
+The default codec is plain. Logstash will encode your events with not only the message field but also with a timestamp and hostname.
+
+If you want the full content of your events to be sent as json, you should set the codec in the output configuration like this:
 [source,ruby]
     output {
       kafka {
-        codec => plain {
-           format => "%{message}"
-        }
+        codec => json
         topic_id => "mytopic"
       }
     }
+    
 For more information see http://kafka.apache.org/documentation.html#theproducer
 
 Kafka producer configuration: http://kafka.apache.org/documentation.html#newproducerconfigs
