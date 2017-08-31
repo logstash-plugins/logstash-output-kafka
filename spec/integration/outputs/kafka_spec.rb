@@ -157,7 +157,7 @@ describe "outputs/kafka", :integration => true do
   def load_kafka_data(config)
     kafka = LogStash::Outputs::Kafka.new(config)
     kafka.register
-    num_events.times do kafka.receive(event) end
+    kafka.multi_receive(num_events.times.collect { event })
     kafka.close
   end
 

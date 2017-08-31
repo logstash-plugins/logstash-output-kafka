@@ -25,34 +25,87 @@ describe "outputs/kafka" do
   context 'when outputting messages' do
     it 'should send logstash event to kafka broker' do
       expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
-        .with(an_instance_of(org.apache.kafka.clients.producer.ProducerRecord))
+        .with(an_instance_of(org.apache.kafka.clients.producer.ProducerRecord)).and_call_original
       kafka = LogStash::Outputs::Kafka.new(simple_kafka_config)
       kafka.register
-      kafka.receive(event)
+      kafka.multi_receive([event])
     end
 
     it 'should support Event#sprintf placeholders in topic_id' do
       topic_field = 'topic_name'
       expect(org.apache.kafka.clients.producer.ProducerRecord).to receive(:new)
-        .with("my_topic", event.to_s)
-      expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+        .with("my_topic", event.to_s).and_call_original
+      expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send).and_call_original
       kafka = LogStash::Outputs::Kafka.new({'topic_id' => "%{#{topic_field}}"})
       kafka.register
-      kafka.receive(event)
+      kafka.multi_receive([event])
     end
 
     it 'should support field referenced message_keys' do
       expect(org.apache.kafka.clients.producer.ProducerRecord).to receive(:new)
-        .with("test", "172.0.0.1", event.to_s)
-      expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+        .with("test", "172.0.0.1", event.to_s).and_call_original
+      expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send).and_call_original
       kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge({"message_key" => "%{host}"}))
       kafka.register
-      kafka.receive(event)
+      kafka.multi_receive([event])
     end
     
     it 'should raise config error when truststore location is not set and ssl is enabled' do
-      kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge({"ssl" => "true"}))
+      kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge("security_protocol" => "SSL"))
       expect { kafka.register }.to raise_error(LogStash::ConfigurationError, /ssl_truststore_location must be set when SSL is enabled/)
+    end
+  end
+
+  context "when a send fails" do
+    context "and the default retries behavior is used" do
+      # Fail this many times and then finally succeed.
+      let(:failcount) { (rand * 10).to_i }
+
+      # Expect KafkaProducer.send() to get called again after every failure, plus the successful one.
+      let(:sendcount) { failcount + 1 }
+
+      it "should retry until successful" do
+        count = 0;
+
+        expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+              .exactly(sendcount).times
+              .and_wrap_original do |m, *args|
+          if count < failcount
+            p count  => failcount
+            count += 1
+            # inject some failures.
+
+            # Return a custom Future that will raise an exception to simulate a Kafka send() problem.
+            future = java.util.concurrent.FutureTask.new(java.util.concurrent.Callable.new { raise "Failed" })
+            future.run
+            future
+          else
+            m.call(*args)
+          end
+        end
+        kafka = LogStash::Outputs::Kafka.new(simple_kafka_config)
+        kafka.register
+        kafka.multi_receive([event])
+      end
+    end
+
+    context "and when retries is set by the user" do
+      let(:retries) { (rand * 10).to_i }
+      let(:max_sends) { retries + 1 }
+
+      it "should give up after retries are exhausted" do
+        expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+              .at_most(max_sends).times
+              .and_wrap_original do |m, *args|
+          # Always fail.
+          future = java.util.concurrent.FutureTask.new(java.util.concurrent.Callable.new { raise "Failed" })
+          future.run
+          future
+        end
+        kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge("retries" => retries))
+        kafka.register
+        kafka.multi_receive([event])
+      end
     end
   end
 end

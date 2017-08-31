@@ -111,9 +111,15 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   # elapses the client will resend the request if necessary or fail the request if
   # retries are exhausted.
   config :request_timeout_ms, :validate => :string
-  # Setting a value greater than zero will cause the client to
-  # resend any record whose send fails with a potentially transient error.
-  config :retries, :validate => :number, :default => 0
+  # The default retry behavior is to retry until successful. To prevent data loss,
+  # the use of this setting is discouraged.
+  #
+  # If you choose to set `retries`, a value greater than zero will cause the
+  # client to only retry a fixed number of times. This will result in data loss
+  # if a transient error outlasts your retry count.
+  #
+  # A value less than zero is a configuration error.
+  config :retries, :validate => :number
   # The amount of time to wait before attempting to retry a failed produce request to a given topic partition.
   config :retry_backoff_ms, :validate => :number, :default => 100
   # The size of the TCP send buffer to use when sending data.
@@ -175,6 +181,17 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
   public
   def register
+    @thread_batch_map = Concurrent::Hash.new
+
+    if !@retries.nil? 
+      if @retries < 0
+        raise ConfigurationError, "A negative retry count (#{@retries}) is not valid. Must be a value >= 0"
+      end
+
+      @logger.warn("Kafka output is configured with finite retry. This instructs Logstash to LOSE DATA after a set number of send attempts fails. If you do not want to lose data if Kafka is down, then you must remove the retry setting.", :retries => @retries)
+    end
+
+
     @producer = create_producer
     @codec.on_event do |event, data|
       begin
@@ -183,7 +200,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         else
           record = org.apache.kafka.clients.producer.ProducerRecord.new(event.sprintf(@topic_id), event.sprintf(@message_key), data)
         end
-        @producer.send(record)
+        prepare(record)
       rescue LogStash::ShutdownSignal
         @logger.debug('Kafka producer got shutdown signal')
       rescue => e
@@ -191,14 +208,72 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
                      :exception => e)
       end
     end
-
   end # def register
 
-  def receive(event)
-    if event == LogStash::SHUTDOWN
-      return
+  def prepare(record)
+    # This output is threadsafe, so we need to keep a batch per thread.
+    @thread_batch_map[Thread.current].add(record)
+  end
+
+  def multi_receive(events)
+    t = Thread.current
+    if !@thread_batch_map.include?(t)
+      @thread_batch_map[t] = java.util.ArrayList.new(events.size)
     end
-    @codec.encode(event)
+
+    events.each do |event|
+      break if event == LogStash::SHUTDOWN
+      @codec.encode(event)
+    end
+
+    batch = @thread_batch_map[t]
+    if batch.any?
+      retrying_send(batch)
+      batch.clear
+    end
+  end
+
+  def retrying_send(batch)
+    remaining = @retries;
+
+    while batch.any?
+      if !remaining.nil?
+        if remaining < 0
+          # TODO(sissel): Offer to DLQ? Then again, if it's a transient fault,
+          # DLQing would make things worse (you dlq data that would be successful
+          # after the fault is repaired)
+          logger.info("Exhausted user-configured retry count when sending to Kafka. Dropping these events.",
+                      :max_retries => @retries, :drop_count => batch.count)
+          break
+        end
+
+        remaining -= 1
+      end
+
+      futures = batch.collect { |record| @producer.send(record) }
+
+      failures = []
+      futures.each_with_index do |future, i|
+        begin
+          result = future.get()
+        rescue => e
+          # TODO(sissel): Add metric to count failures, possibly by exception type.
+          logger.debug? && logger.debug("KafkaProducer.send() failed: #{e}", :exception => e);
+          failures << batch[i]
+        end
+      end
+
+      # No failures? Cool. Let's move on.
+      break if failures.empty?
+
+      # Otherwise, retry with any failed transmissions
+      batch = failures
+      delay = 1.0 / @retry_backoff_ms
+      logger.info("Sending batch to Kafka failed. Will retry after a delay.", :batch_size => batch.size,
+                  :failures => failures.size, :sleep => delay);
+      sleep(delay)
+    end
+
   end
 
   def close
@@ -222,8 +297,8 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       props.put(kafka::MAX_REQUEST_SIZE_CONFIG, max_request_size.to_s)
       props.put(kafka::RECONNECT_BACKOFF_MS_CONFIG, reconnect_backoff_ms) unless reconnect_backoff_ms.nil?
       props.put(kafka::REQUEST_TIMEOUT_MS_CONFIG, request_timeout_ms) unless request_timeout_ms.nil?
-      props.put(kafka::RETRIES_CONFIG, retries.to_s)
-      props.put(kafka::RETRY_BACKOFF_MS_CONFIG, retry_backoff_ms.to_s)
+      props.put(kafka::RETRIES_CONFIG, retries.to_s) unless retries.nil?
+      props.put(kafka::RETRY_BACKOFF_MS_CONFIG, retry_backoff_ms.to_s) 
       props.put(kafka::SEND_BUFFER_CONFIG, send_buffer_bytes.to_s)
       props.put(kafka::VALUE_SERIALIZER_CLASS_CONFIG, value_serializer)
 
