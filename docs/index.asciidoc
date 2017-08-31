@@ -300,10 +300,17 @@ retries are exhausted.
 ===== `retries` 
 
   * Value type is <<number,number>>
-  * Default value is `0`
+  * There is no default value for this setting.
 
-Setting a value greater than zero will cause the client to
-resend any record whose send fails with a potentially transient error.
+The default retry behavior is to retry until successful. To prevent data loss,
+the use of this setting is discouraged.
+
+If you choose to set `retries`, a value greater than zero will cause the
+client to only retry a fixed number of times. This will result in data loss
+if a transport fault exists for longer than your retry count (network outage,
+Kafka down, etc).
+
+A value less than zero is a configuration error.
 
 [id="plugins-{type}s-{plugin}-retry_backoff_ms"]
 ===== `retry_backoff_ms` 
