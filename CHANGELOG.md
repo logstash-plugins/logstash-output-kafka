@@ -1,3 +1,6 @@
+## 5.1.11
+  - Docs: Fix misleading info about the default codec
+
 ## 5.1.10
   - Doc fixes
 
