@@ -245,9 +245,26 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         remaining -= 1
       end
 
-      futures = batch.collect { |record| @producer.send(record) }
-
       failures = []
+
+      futures = batch.collect do |record| 
+        begin
+          # send() can throw an exception even before the future is created.
+          @producer.send(record)
+        rescue org.apache.kafka.common.errors.TimeoutException => e
+          failures << record
+          nil
+        rescue org.apache.kafka.common.errors.InterruptException => e
+          failures << record
+          nil
+        rescue org.apache.kafka.common.errors.SerializationException => e
+          # TODO(sissel): Retrying will fail because the data itself has a problem serializing.
+          # TODO(sissel): Let's add DLQ here.
+          failures << record
+          nil
+        end
+      end.compact
+
       futures.each_with_index do |future, i|
         begin
           result = future.get()
