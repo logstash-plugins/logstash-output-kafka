@@ -55,6 +55,38 @@ describe "outputs/kafka" do
       expect { kafka.register }.to raise_error(LogStash::ConfigurationError, /ssl_truststore_location must be set when SSL is enabled/)
     end
   end
+  
+  context "when KafkaProducer#send() raises an exception" do
+    let(:failcount) { (rand * 10).to_i }
+    let(:sendcount) { failcount + 1 }
+
+    let(:exception_classes) { [
+      org.apache.kafka.common.errors.TimeoutException,
+      org.apache.kafka.common.errors.InterruptException,
+      org.apache.kafka.common.errors.SerializationException
+    ] }
+
+    before do
+      count = 0
+      expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+        .exactly(sendcount).times
+        .and_wrap_original do |m, *args|
+        if count < failcount # fail 'failcount' times in a row.
+          count += 1
+          # Pick an exception at random
+          raise exception_classes.shuffle.first.new("injected exception for testing")
+        else
+          m.call(*args) # call original
+        end
+      end
+    end
+
+    it "should retry until successful" do
+      kafka = LogStash::Outputs::Kafka.new(simple_kafka_config)
+      kafka.register
+      kafka.multi_receive([event])
+    end
+  end
 
   context "when a send fails" do
     context "and the default retries behavior is used" do
@@ -71,12 +103,11 @@ describe "outputs/kafka" do
               .exactly(sendcount).times
               .and_wrap_original do |m, *args|
           if count < failcount
-            p count  => failcount
             count += 1
             # inject some failures.
 
             # Return a custom Future that will raise an exception to simulate a Kafka send() problem.
-            future = java.util.concurrent.FutureTask.new(java.util.concurrent.Callable.new { raise "Failed" })
+            future = java.util.concurrent.FutureTask.new { raise "Failed" }
             future.run
             future
           else
@@ -98,7 +129,7 @@ describe "outputs/kafka" do
               .at_most(max_sends).times
               .and_wrap_original do |m, *args|
           # Always fail.
-          future = java.util.concurrent.FutureTask.new(java.util.concurrent.Callable.new { raise "Failed" })
+          future = java.util.concurrent.FutureTask.new { raise "Failed" }
           future.run
           future
         end
