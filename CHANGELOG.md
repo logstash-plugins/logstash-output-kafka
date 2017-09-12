@@ -1,3 +1,6 @@
+## 7.1.0
+  - Add ability to specify message timestamp (#124)
+
 ## 7.0.2
   - Docs: Fix misleading info about the default codec
 
