@@ -2,13 +2,18 @@
 sudo: false
 language: ruby
 cache: bundler
-jdk: oraclejdk8
+env: 
 rvm:
-  - jruby-1.7.25
-env:
-  - KAFKA_VERSION=0.10.1.0
-before_install: ./kafka_test_setup.sh
-before_script:
-  - bundle exec rake vendor
-script: bundle exec rspec && bundle exec rspec --tag integration
-after_script: ./kafka_test_teardown.sh
+- jruby-1.7.25
+matrix:
+  include:
+  - rvm: jruby-9.1.10.0
+    env: LOGSTASH_BRANCH=master
+  - rvm: jruby-9.1.10.0
+    env: LOGSTASH_BRANCH=6.x
+  - rvm: jruby-1.7.25
+    env: LOGSTASH_BRANCH=5.6
+  fast_finish: true
+install: true
+script: ci/build.sh
+jdk: oraclejdk8

@@ -1,5 +1,26 @@
-## 6.1.5
+## 7.0.3
   - Add ability to specify message timestamp (#124)
+
+## 7.0.2
+  - Docs: Fix misleading info about the default codec
+
+## 7.0.1
+  - Fix some documentation issues
+
+## 7.0.0
+  - Breaking: mark deprecated `block_on_buffer_full`, `ssl` and `timeout_ms` options as obsolete
+
+## 6.2.2
+  - bump kafka dependency to 0.11.0.0
+
+## 6.2.0
+  - bump kafka dependency to 0.10.2.1
+
+## 6.1.6
+  - bring back log4j1.x compatibility
+
+## 6.1.5
+  - Fix a NPE when SASL_SSL+PLAIN (no Kerberos) was specified.
 
 ## 6.1.4
   - Fix a bug where consumer was not correctly setup when `SASL_SSL` option was specified.
