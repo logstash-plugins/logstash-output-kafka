@@ -85,6 +85,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 | <<plugins-{type}s-{plugin}-linger_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-max_request_size>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-message_key>> |<<string,string>>|No
+| <<plugins-{type}s-{plugin}-message_timestamp |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-metadata_fetch_timeout_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-metadata_max_age_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-receive_buffer_bytes>> |<<number,number>>|No
@@ -243,6 +244,12 @@ The maximum size of a request
   * There is no default value for this setting.
 
 The key for the message
+
+[id="plugins-{type}s-{plugin}-message_timestamp"]
+===== `message_timestamp` 
+  * The timestamp for the message. This can either be:
+  * - a field containing a timestamp value
+  * - an sprintf-style field containing a timestamp value
 
 [id="plugins-{type}s-{plugin}-metadata_fetch_timeout_ms"]
 ===== `metadata_fetch_timeout_ms` 
