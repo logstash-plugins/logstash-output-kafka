@@ -1,4 +1,10 @@
 ## 5.1.11
+  - Bugfix: Sends are now retried until successful. Previously, failed transmissions to Kafka 
+    could have been lost by the KafkaProducer library. Now we verify transmission explicitly.
+    This changes the default 'retry' from 0 to retry-forever. It was a bug that we defaulted
+    to a retry count of 0.
+    https://github.com/logstash-plugins/logstash-output-kafka/pull/151
+
   - Docs: Fix misleading info about the default codec
 
 ## 5.1.10
