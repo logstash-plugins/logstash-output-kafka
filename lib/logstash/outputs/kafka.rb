@@ -3,6 +3,8 @@ require 'logstash/outputs/base'
 require 'java'
 require 'logstash-output-kafka_jars.rb'
 
+java_import org.apache.kafka.clients.producer.ProducerRecord
+
 # Write events to a Kafka topic. This uses the Kafka Producer API to write messages to a topic on
 # the broker.
 #
@@ -188,22 +190,20 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
 
     @producer = create_producer
-    @codec.on_event do |event, data|
-      begin
-        if @message_key.nil?
-          record = org.apache.kafka.clients.producer.ProducerRecord.new(event.sprintf(@topic_id), data)
-        else
-          record = org.apache.kafka.clients.producer.ProducerRecord.new(event.sprintf(@topic_id), event.sprintf(@message_key), data)
-        end
-        prepare(record)
-      rescue LogStash::ShutdownSignal
-        @logger.debug('Kafka producer got shutdown signal')
-      rescue => e
-        @logger.warn('kafka producer threw exception, restarting',
-                     :exception => e)
+    if value_serializer == 'org.apache.kafka.common.serialization.StringSerializer'
+      @codec.on_event do |event, data|
+        write_to_kafka(event, data)
       end
+    elsif value_serializer == 'org.apache.kafka.common.serialization.ByteArraySerializer'
+      @codec.on_event do |event, data|
+        write_to_kafka(event, data.to_java_bytes)
+      end
+    else
+      raise ConfigurationError, "'value_serializer' only supports org.apache.kafka.common.serialization.ByteArraySerializer and org.apache.kafka.common.serialization.StringSerializer" 
     end
-  end # def register
+  end
+
+  # def register
 
   def prepare(record)
     # This output is threadsafe, so we need to keep a batch per thread.
@@ -293,6 +293,21 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   end
 
   private
+
+  def write_to_kafka(event, serialized_data)
+    if @message_key.nil?
+      record = ProducerRecord.new(event.sprintf(@topic_id), serialized_data)
+    else
+      record = ProducerRecord.new(event.sprintf(@topic_id), event.sprintf(@message_key), serialized_data)
+    end
+    prepare(record)
+  rescue LogStash::ShutdownSignal
+    @logger.debug('Kafka producer got shutdown signal')
+  rescue => e
+    @logger.warn('kafka producer threw exception, restarting',
+                 :exception => e)
+  end
+
   def create_producer
     begin
       props = java.util.Properties.new

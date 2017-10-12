@@ -13,7 +13,7 @@ describe "outputs/kafka", :integration => true do
   let(:event) { LogStash::Event.new({'message' => '183.60.215.50 - - [11/Sep/2014:22:00:00 +0000] "GET /scripts/netcat-webserver HTTP/1.1" 200 182 "-" "Mozilla/5.0 (compatible; EasouSpider; +http://www.easou.com/search/spider.html)"', '@timestamp' => LogStash::Timestamp.at(0) }) }
 
 
-  context 'when outputting messages' do
+  context 'when outputting messages serialized as String' do
     let(:test_topic) { 'topic1' }
     let(:num_events) { 3 }
     let(:consumer) do
@@ -26,6 +26,36 @@ describe "outputs/kafka", :integration => true do
 
     before :each do
       config = base_config.merge({"topic_id" => test_topic})
+      load_kafka_data(config)
+    end
+
+    it 'should have data integrity' do
+      expect(subject.size).to eq(num_events)
+      subject.each do |m|
+        expect(m.value).to eq(event.to_s)
+      end
+    end
+
+  end
+
+  context 'when outputting messages serialized as Byte Array' do
+    let(:test_topic) { 'topic1b' }
+    let(:num_events) { 3 }
+    let(:consumer) do
+      Poseidon::PartitionConsumer.new("my_test_consumer", kafka_host, kafka_port,
+                                      test_topic, 0, :earliest_offset)
+    end
+    subject do
+      consumer.fetch
+    end
+
+    before :each do
+      config = base_config.merge(
+        {
+          "topic_id" => test_topic,
+          "value_serializer" => 'org.apache.kafka.common.serialization.ByteArraySerializer'
+        }
+      )
       load_kafka_data(config)
     end
 
