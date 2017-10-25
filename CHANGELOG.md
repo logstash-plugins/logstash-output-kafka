@@ -1,3 +1,6 @@
+## 7.0.4
+  - Bugfix: Fixed a bug that broke using `org.apache.kafka.common.serialization.ByteArraySerializer` as the `value_serializer`
+
 ## 7.0.3
   - Bugfix: Sends are now retried until successful. Previously, failed transmissions to Kafka
     could have been lost by the KafkaProducer library. Now we verify transmission explicitly.
