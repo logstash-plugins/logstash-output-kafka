@@ -1,3 +1,6 @@
+## 7.0.5
+  - Update gemspec summary
+
 ## 7.0.4
   - Bugfix: Fixed a bug that broke using `org.apache.kafka.common.serialization.ByteArraySerializer` as the `value_serializer`
 
