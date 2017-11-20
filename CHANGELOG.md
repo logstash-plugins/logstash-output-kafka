@@ -1,3 +1,6 @@
+## 7.0.6
+  - bump kafka dependency to 1.0.0
+
 ## 7.0.5
   - Update gemspec summary
 
