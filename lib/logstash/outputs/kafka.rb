@@ -280,7 +280,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
       # Otherwise, retry with any failed transmissions
       batch = failures
-      delay = 1.0 / @retry_backoff_ms
+      delay = @retry_backoff_ms / 1000.0
       logger.info("Sending batch to Kafka failed. Will retry after a delay.", :batch_size => batch.size,
                   :failures => failures.size, :sleep => delay);
       sleep(delay)
