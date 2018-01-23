@@ -1,3 +1,6 @@
+## 6.2.4
+  - Improve error logging when a producer cannot be created.
+ 
 ## 6.2.3
   - Bugfix: Sends are now retried until successful. Previously, failed transmissions to Kafka
     could have been lost by the KafkaProducer library. Now we verify transmission explicitly.
