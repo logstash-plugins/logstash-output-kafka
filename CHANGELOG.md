@@ -1,3 +1,6 @@
+## 7.0.8
+  - Improve error logging when a producer cannot be created.
+ 
 ## 7.0.7
   - documentation updates
 

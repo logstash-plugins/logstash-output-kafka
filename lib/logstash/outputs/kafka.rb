@@ -343,7 +343,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
       org.apache.kafka.clients.producer.KafkaProducer.new(props)
     rescue => e
-      logger.error("Unable to create Kafka producer from given configuration", :kafka_error_message => e)
+      logger.error("Unable to create Kafka producer from given configuration",
+                   :kafka_error_message => e,
+                   :cause => e.respond_to?(:getCause) ? e.getCause() : nil)
       raise e
     end
   end
