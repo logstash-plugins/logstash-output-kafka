@@ -270,7 +270,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
           result = future.get()
         rescue => e
           # TODO(sissel): Add metric to count failures, possibly by exception type.
-          logger.debug? && logger.debug("KafkaProducer.send() failed: #{e}", :exception => e);
+          logger.warn("KafkaProducer.send() failed: #{e}", :exception => e)
           failures << batch[i]
         end
       end
