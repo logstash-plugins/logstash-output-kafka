@@ -1,3 +1,6 @@
+## 7.0.9
+  - Docs: Set the default_codec doc attribute.
+
 ## 7.0.8
   - Improve error logging when a producer cannot be created.
  
