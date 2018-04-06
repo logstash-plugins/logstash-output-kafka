@@ -1,3 +1,6 @@
+## 7.0.10
+  - Fix broken 7.0.9 release
+
 ## 7.0.9
   - Docs: Set the default_codec doc attribute.
 
