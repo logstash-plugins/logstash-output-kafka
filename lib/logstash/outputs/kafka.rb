@@ -268,6 +268,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       futures.each_with_index do |future, i|
         begin
           result = future.get()
+        rescue org.apache.kafka.common.errors.RecordTooLargeException => x
+          logger.warn("KafkaProducer send() failed: #{x}", :exception => x)
+          failures << batch[i]
         rescue => e
           # TODO(sissel): Add metric to count failures, possibly by exception type.
           logger.debug? && logger.debug("KafkaProducer.send() failed: #{e}", :exception => e);
