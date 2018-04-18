@@ -1,3 +1,6 @@
+## 7.0.11
+  - Internal: Update build to gradle
+
 ## 7.0.10
   - Fix broken 7.0.9 release
 
