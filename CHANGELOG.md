@@ -1,5 +1,6 @@
 ## 7.0.11
   - Internal: Update build to gradle
+  - Upgrade Kafka client to version 1.1.0
 
 ## 7.0.10
   - Fix broken 7.0.9 release
