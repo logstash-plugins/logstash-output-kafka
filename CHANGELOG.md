@@ -1,4 +1,4 @@
-## 7.0.11
+## 7.1.0
   - Internal: Update build to gradle
   - Upgrade Kafka client to version 1.1.0
 
