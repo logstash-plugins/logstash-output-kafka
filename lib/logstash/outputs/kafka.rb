@@ -262,6 +262,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         rescue org.apache.kafka.common.errors.InterruptException => e
           failures << record
           nil
+        rescue org.apache.kafka.common.errors.RecordTooLargeException => e
+          failures << record
+          nil
         rescue org.apache.kafka.common.errors.SerializationException => e
           # TODO(sissel): Retrying will fail because the data itself has a problem serializing.
           # TODO(sissel): Let's add DLQ here.
