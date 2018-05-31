@@ -9,7 +9,7 @@ else
 fi
 
 echo "Downloading Kafka version $KAFKA_VERSION"
-curl -s -o kafka.tgz "http://ftp.wayne.edu/apache/kafka/$KAFKA_VERSION/kafka_2.11-$KAFKA_VERSION.tgz"
+curl -s -o kafka.tgz "https://archive.apache.org/dist/kafka/$KAFKA_VERSION/kafka_2.11-$KAFKA_VERSION.tgz"
 mkdir kafka && tar xzf kafka.tgz -C kafka --strip-components 1
 
 echo "Starting ZooKeeper"
