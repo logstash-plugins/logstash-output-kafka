@@ -1,3 +1,6 @@
+## 7.1.1
+  - Changed Kafka send errors to log as warn [#179](https://github.com/logstash-plugins/logstash-output-kafka/pull/179)
+
 ## 7.1.0
   - Internal: Update build to gradle
   - Upgrade Kafka client to version 1.1.0
