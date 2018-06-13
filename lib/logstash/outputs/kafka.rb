@@ -247,27 +247,32 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
         begin
           # send() can throw an exception even before the future is created.
           @producer.send(record)
-        rescue org.apache.kafka.common.errors.TimeoutException => e
+        rescue org.apache.kafka.common.errors.RetriableException => e
+          logger.info("KafkaProducer.send() failed, will retry", :exception => e)
           failures << record
           nil
-        rescue org.apache.kafka.common.errors.InterruptException => e
-          failures << record
-          nil
-        rescue org.apache.kafka.common.errors.SerializationException => e
-          # TODO(sissel): Retrying will fail because the data itself has a problem serializing.
-          # TODO(sissel): Let's add DLQ here.
-          failures << record
+        rescue org.apache.kafka.common.KafkaException => e
+          # This error is not retriable, drop event
+          # TODO: add DLQ support
+          logger.warn("KafkaProducer.send() failed, dropping record", :exception => e, :record_value => record.value)
           nil
         end
       end.compact
 
       futures.each_with_index do |future, i|
         begin
-          result = future.get()
-        rescue => e
+          future.get()
+        rescue java.util.concurrent.ExecutionException => e
           # TODO(sissel): Add metric to count failures, possibly by exception type.
-          logger.warn("KafkaProducer.send() failed: #{e}", :exception => e)
-          failures << batch[i]
+          if e.get_cause.is_a? org.apache.kafka.common.errors.RetriableException
+            logger.info("KafkaProducer.send() future failed, will retry", :exception => e.get_cause)
+            failures << batch[i]
+          elsif e.get_cause.is_a? org.apache.kafka.common.KafkaException
+            # This error is not retriable, drop event
+            # TODO: add DLQ support
+            logger.warn("KafkaProducer.send() future failed, dropping record", :exception => e.get_cause,
+                        :record_value => batch[i].value)
+          end
         end
       end
 
