@@ -1,3 +1,6 @@
+## 7.1.2
+  - Fixed handling of two settings that weren't wired to the kafka client [#198](https://github.com/logstash-plugins/logstash-output-kafka/pull/198)
+
 ## 7.1.1
   - Changed Kafka send errors to log as warn [#179](https://github.com/logstash-plugins/logstash-output-kafka/pull/179)
 
