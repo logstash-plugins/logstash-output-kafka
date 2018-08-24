@@ -1,3 +1,6 @@
+## 7.1.3
+  - Fixed handling of receive buffer bytes setting [#204](https://github.com/logstash-plugins/logstash-output-kafka/pull/204)
+
 ## 7.1.2
   - Fixed handling of two settings that weren't wired to the kafka client [#198](https://github.com/logstash-plugins/logstash-output-kafka/pull/198)
 
