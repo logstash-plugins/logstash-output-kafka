@@ -1,3 +1,6 @@
+## 7.3.0
+  - Changed Kafka client to version 2.1.0
+
 ## 7.2.1
   - Changed Kafka client to version 2.0.1 [#209](https://github.com/logstash-plugins/logstash-output-kafka/pull/209)
 
