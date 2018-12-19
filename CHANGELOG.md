@@ -1,3 +1,6 @@
+## 7.3.1
+  - Added support for kafka property `ssl.endpoint.identification.algorithm` [#213](https://github.com/logstash-plugins/logstash-output-kafka/pull/213)
+
 ## 7.3.0
   - Changed Kafka client to version 2.1.0
 
