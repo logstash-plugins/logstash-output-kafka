@@ -228,7 +228,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
     remaining = @retries
 
     while batch.any?
-      if !remaining.nil?
+      unless remaining.nil?
         if remaining < 0
           # TODO(sissel): Offer to DLQ? Then again, if it's a transient fault,
           # DLQing would make things worse (you dlq data that would be successful
@@ -257,21 +257,24 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
           logger.warn("KafkaProducer.send() failed, dropping record", :exception => e, :record_value => record.value)
           nil
         end
-      end.compact
+      end
 
       futures.each_with_index do |future, i|
-        begin
-          future.get()
-        rescue java.util.concurrent.ExecutionException => e
-          # TODO(sissel): Add metric to count failures, possibly by exception type.
-          if e.get_cause.is_a? org.apache.kafka.common.errors.RetriableException
-            logger.info("KafkaProducer.send() future failed, will retry", :exception => e.get_cause)
-            failures << batch[i]
-          elsif e.get_cause.is_a? org.apache.kafka.common.KafkaException
-            # This error is not retriable, drop event
-            # TODO: add DLQ support
-            logger.warn("KafkaProducer.send() future failed, dropping record", :exception => e.get_cause,
-                        :record_value => batch[i].value)
+        # We cannot skip nils using `futures.compact` because then our index `i` will not align with `batch`
+        unless future.nil?
+          begin
+            future.get
+          rescue java.util.concurrent.ExecutionException => e
+            # TODO(sissel): Add metric to count failures, possibly by exception type.
+            if e.get_cause.is_a? org.apache.kafka.common.errors.RetriableException
+              logger.info("KafkaProducer.send() future failed, will retry", :exception => e.get_cause)
+              failures << batch[i]
+            elsif e.get_cause.is_a? org.apache.kafka.common.KafkaException
+              # This error is not retriable, drop event
+              # TODO: add DLQ support
+              logger.warn("KafkaProducer.send() future failed, dropping record", :exception => e.get_cause,
+                          :record_value => batch[i].value)
+            end
           end
         end
       end
