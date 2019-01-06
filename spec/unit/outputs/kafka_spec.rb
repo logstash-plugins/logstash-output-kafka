@@ -56,14 +56,14 @@ describe "outputs/kafka" do
     end
   end
   
-  context "when KafkaProducer#send() raises an exception" do
+  context "when KafkaProducer#send() raises a retriable exception" do
     let(:failcount) { (rand * 10).to_i }
     let(:sendcount) { failcount + 1 }
 
     let(:exception_classes) { [
       org.apache.kafka.common.errors.TimeoutException,
-      org.apache.kafka.common.errors.InterruptException,
-      org.apache.kafka.common.errors.SerializationException
+      org.apache.kafka.common.errors.DisconnectException,
+      org.apache.kafka.common.errors.CoordinatorNotAvailableException
     ] }
 
     before do
@@ -88,6 +88,37 @@ describe "outputs/kafka" do
     end
   end
 
+  context "when KafkaProducer#send() raises a non-retriable exception" do
+    let(:failcount) { (rand * 10).to_i }
+
+    let(:exception_classes) { [
+        org.apache.kafka.common.errors.SerializationException,
+        org.apache.kafka.common.errors.RecordTooLargeException,
+        org.apache.kafka.common.errors.InvalidTopicException
+    ] }
+
+    before do
+      count = 0
+      expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+        .exactly(1).times
+        .and_wrap_original do |m, *args|
+        if count < failcount # fail 'failcount' times in a row.
+          count += 1
+          # Pick an exception at random
+          raise exception_classes.shuffle.first.new("injected exception for testing")
+        else
+          m.call(*args) # call original
+        end
+      end
+    end
+
+    it "should not retry" do
+      kafka = LogStash::Outputs::Kafka.new(simple_kafka_config)
+      kafka.register
+      kafka.multi_receive([event])
+    end
+  end
+
   context "when a send fails" do
     context "and the default retries behavior is used" do
       # Fail this many times and then finally succeed.
@@ -97,7 +128,7 @@ describe "outputs/kafka" do
       let(:sendcount) { failcount + 1 }
 
       it "should retry until successful" do
-        count = 0;
+        count = 0
 
         expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
               .exactly(sendcount).times
@@ -107,7 +138,7 @@ describe "outputs/kafka" do
             # inject some failures.
 
             # Return a custom Future that will raise an exception to simulate a Kafka send() problem.
-            future = java.util.concurrent.FutureTask.new { raise "Failed" }
+            future = java.util.concurrent.FutureTask.new { raise org.apache.kafka.common.errors.TimeoutException.new("Failed") }
             future.run
             future
           else
@@ -129,7 +160,7 @@ describe "outputs/kafka" do
                                                                                        .once
                                                                                        .and_wrap_original do |m, *args|
           # Always fail.
-          future = java.util.concurrent.FutureTask.new { raise "Failed" }
+          future = java.util.concurrent.FutureTask.new { raise org.apache.kafka.common.errors.TimeoutException.new("Failed") }
           future.run
           future
         end
@@ -143,7 +174,7 @@ describe "outputs/kafka" do
                                                                                        .once
                                                                                        .and_wrap_original do |m, *args|
           # Always fail.
-          future = java.util.concurrent.FutureTask.new { raise "Failed" }
+          future = java.util.concurrent.FutureTask.new { raise org.apache.kafka.common.errors.TimeoutException.new("Failed") }
           future.run
           future
         end
@@ -164,7 +195,7 @@ describe "outputs/kafka" do
               .at_most(max_sends).times
               .and_wrap_original do |m, *args|
           # Always fail.
-          future = java.util.concurrent.FutureTask.new { raise "Failed" }
+          future = java.util.concurrent.FutureTask.new { raise org.apache.kafka.common.errors.TimeoutException.new("Failed") }
           future.run
           future
         end
@@ -175,10 +206,10 @@ describe "outputs/kafka" do
 
       it 'should only sleep retries number of times' do
         expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
-                                                                                       .at_most(max_sends)
+                                                                                       .at_most(max_sends).times
                                                                                        .and_wrap_original do |m, *args|
           # Always fail.
-          future = java.util.concurrent.FutureTask.new { raise "Failed" }
+          future = java.util.concurrent.FutureTask.new { raise org.apache.kafka.common.errors.TimeoutException.new("Failed") }
           future.run
           future
         end
