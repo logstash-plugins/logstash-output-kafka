@@ -1,3 +1,6 @@
+## 8.0.0
+  - Removed obsolete `block_on_buffer_full`, `ssl` and `timeout_ms` options
+
 ## 7.3.1
   - Added support for kafka property `ssl.endpoint.identification.algorithm` [#213](https://github.com/logstash-plugins/logstash-output-kafka/pull/213)
 
