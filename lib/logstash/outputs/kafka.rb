@@ -281,12 +281,11 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       break if failures.empty?
 
       # Otherwise, retry with any failed transmissions
-      if remaining != nil && remaining < 0
-        logger.info("Sending batch to Kafka failed.", :batch_size => batch.size,:failures => failures.size)
-      else
+      if remaining.nil? || remaining >= 0
         delay = @retry_backoff_ms / 1000.0
         logger.info("Sending batch to Kafka failed. Will retry after a delay.", :batch_size => batch.size,
-                    :failures => failures.size, :sleep => delay)
+                                                                                :failures => failures.size,
+                                                                                :sleep => delay)
         batch = failures
         sleep(delay)
       end
