@@ -49,7 +49,7 @@ describe "outputs/kafka" do
       kafka.register
       kafka.multi_receive([event])
     end
-    
+
     it 'should raise config error when truststore location is not set and ssl is enabled' do
       kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge("security_protocol" => "SSL"))
       expect { kafka.register }.to raise_error(LogStash::ConfigurationError, /ssl_truststore_location must be set when SSL is enabled/)
@@ -120,6 +120,41 @@ describe "outputs/kafka" do
       end
     end
 
+    context 'when retries is 0' do
+      let(:retries) { 0  }
+      let(:max_sends) { 1 }
+
+      it "should should only send once" do
+        expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+                                                                                       .once
+                                                                                       .and_wrap_original do |m, *args|
+          # Always fail.
+          future = java.util.concurrent.FutureTask.new { raise "Failed" }
+          future.run
+          future
+        end
+        kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge("retries" => retries))
+        kafka.register
+        kafka.multi_receive([event])
+      end
+
+      it 'should not sleep' do
+        expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+                                                                                       .once
+                                                                                       .and_wrap_original do |m, *args|
+          # Always fail.
+          future = java.util.concurrent.FutureTask.new { raise "Failed" }
+          future.run
+          future
+        end
+
+        kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge("retries" => retries))
+        expect(kafka).not_to receive(:sleep).with(anything)
+        kafka.register
+        kafka.multi_receive([event])
+      end
+    end
+
     context "and when retries is set by the user" do
       let(:retries) { (rand * 10).to_i }
       let(:max_sends) { retries + 1 }
@@ -134,6 +169,21 @@ describe "outputs/kafka" do
           future
         end
         kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge("retries" => retries))
+        kafka.register
+        kafka.multi_receive([event])
+      end
+
+      it 'should only sleep retries number of times' do
+        expect_any_instance_of(org.apache.kafka.clients.producer.KafkaProducer).to receive(:send)
+                                                                                       .at_most(max_sends)
+                                                                                       .and_wrap_original do |m, *args|
+          # Always fail.
+          future = java.util.concurrent.FutureTask.new { raise "Failed" }
+          future.run
+          future
+        end
+        kafka = LogStash::Outputs::Kafka.new(simple_kafka_config.merge("retries" => retries))
+        expect(kafka).to receive(:sleep).exactly(retries).times
         kafka.register
         kafka.multi_receive([event])
       end
