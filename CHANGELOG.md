@@ -1,3 +1,6 @@
+## 8.0.1
+  - Fixed issue with unnecessary sleep after retries exhausted [#216](https://github.com/logstash-plugins/logstash-output-kafka/pull/216)
+
 ## 8.0.0
   - Removed obsolete `block_on_buffer_full`, `ssl` and `timeout_ms` options
 
