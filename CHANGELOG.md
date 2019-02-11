@@ -1,6 +1,8 @@
 ## 6.2.4
-  - Improve error logging when a producer cannot be created.
- 
+  - Backport of fixes from more recent branches:
+    - Fixed unnecessary sleep after exhausted retries [#166](https://github.com/logstash-plugins/logstash-output-kafka/pull/166)
+    - Changed Kafka send errors to log as warn [#179](https://github.com/logstash-plugins/logstash-output-kafka/pull/179)
+
 ## 6.2.3
   - Bugfix: Sends are now retried until successful. Previously, failed transmissions to Kafka
     could have been lost by the KafkaProducer library. Now we verify transmission explicitly.
