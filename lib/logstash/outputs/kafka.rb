@@ -234,7 +234,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   end
 
   def retrying_send(batch)
-    remaining = @retries;
+    remaining = @retries
 
     while batch.any?
       if !remaining.nil?
@@ -275,7 +275,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
           result = future.get()
         rescue => e
           # TODO(sissel): Add metric to count failures, possibly by exception type.
-          logger.debug? && logger.debug("KafkaProducer.send() failed: #{e}", :exception => e);
+          logger.warn("KafkaProducer.send() failed: #{e}", :exception => e)
           failures << batch[i]
         end
       end
@@ -284,13 +284,15 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       break if failures.empty?
 
       # Otherwise, retry with any failed transmissions
-      batch = failures
-      delay = 1.0 / @retry_backoff_ms
-      logger.info("Sending batch to Kafka failed. Will retry after a delay.", :batch_size => batch.size,
-                  :failures => failures.size, :sleep => delay);
-      sleep(delay)
+      if remaining.nil? || remaining >= 0
+        delay = @retry_backoff_ms / 1000.0
+        logger.info("Sending batch to Kafka failed. Will retry after a delay.", :batch_size => batch.size,
+                                                                                :failures => failures.size,
+                                                                                :sleep => delay)
+        batch = failures
+        sleep(delay)
+      end
     end
-
   end
 
   def close
