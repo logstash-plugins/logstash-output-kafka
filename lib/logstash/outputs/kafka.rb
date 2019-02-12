@@ -234,7 +234,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   end
 
   def retrying_send(batch)
-    remaining = @retries;
+    remaining = @retries
 
     while batch.any?
       if !remaining.nil?
@@ -284,13 +284,16 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       break if failures.empty?
 
       # Otherwise, retry with any failed transmissions
-      batch = failures
-      delay = 1.0 / @retry_backoff_ms
-      logger.info("Sending batch to Kafka failed. Will retry after a delay.", :batch_size => batch.size,
-                  :failures => failures.size, :sleep => delay);
-      sleep(delay)
+      if remaining != nil && remaining < 0
+        logger.info("Sending batch to Kafka failed.", :batch_size => batch.size,:failures => failures.size)
+      else
+        delay = @retry_backoff_ms / 1000.0
+        logger.info("Sending batch to Kafka failed. Will retry after a delay.", :batch_size => batch.size,
+                    :failures => failures.size, :sleep => delay)
+        batch = failures
+        sleep(delay)
+      end
     end
-
   end
 
   def close
@@ -333,7 +336,9 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
 
       org.apache.kafka.clients.producer.KafkaProducer.new(props)
     rescue => e
-      logger.error("Unable to create Kafka producer from given configuration", :kafka_error_message => e)
+      logger.error("Unable to create Kafka producer from given configuration",
+                   :kafka_error_message => e,
+                   :cause => e.respond_to?(:getCause) ? e.getCause() : nil)
       raise e
     end
   end
