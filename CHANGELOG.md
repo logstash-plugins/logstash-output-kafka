@@ -1,3 +1,7 @@
+## 9.0.0
+  - Changed expected datatype of `request_timeout_ms` option to number
+    [#222](https://github.com/logstash-plugins/logstash-output-kafka/pull/222)
+
 ## 8.0.1
   - Fixed issue with unnecessary sleep after retries exhausted [#216](https://github.com/logstash-plugins/logstash-output-kafka/pull/216)
 

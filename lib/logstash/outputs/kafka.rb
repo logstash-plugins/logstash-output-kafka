@@ -108,7 +108,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   # for the response of a request. If the response is not received before the timeout
   # elapses the client will resend the request if necessary or fail the request if
   # retries are exhausted.
-  config :request_timeout_ms, :validate => :string
+  config :request_timeout_ms, :validate => :number
   # The default retry behavior is to retry until successful. To prevent data loss,
   # the use of this setting is discouraged.
   #
