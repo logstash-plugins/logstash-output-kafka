@@ -75,7 +75,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 | <<plugins-{type}s-{plugin}-metadata_max_age_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-receive_buffer_bytes>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-reconnect_backoff_ms>> |<<number,number>>|No
-| <<plugins-{type}s-{plugin}-request_timeout_ms>> |<<string,string>>|No
+| <<plugins-{type}s-{plugin}-request_timeout_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-retries>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-retry_backoff_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-sasl_kerberos_service_name>> |<<string,string>>|No
@@ -266,7 +266,7 @@ The amount of time to wait before attempting to reconnect to a given host when a
 [id="plugins-{type}s-{plugin}-request_timeout_ms"]
 ===== `request_timeout_ms` 
 
-  * Value type is <<string,string>>
+  * Value type is <<number,number>>
   * There is no default value for this setting.
 
 The configuration controls the maximum amount of time the client will wait
