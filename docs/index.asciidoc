@@ -75,6 +75,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 | <<plugins-{type}s-{plugin}-metadata_max_age_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-receive_buffer_bytes>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-reconnect_backoff_ms>> |<<number,number>>|No
+| <<plugins-{type}s-{plugin}-reconnect_backoff_max_ms>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-request_timeout_ms>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-retries>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-retry_backoff_ms>> |<<number,number>>|No
@@ -259,9 +260,22 @@ The size of the TCP receive buffer to use when reading data
 ===== `reconnect_backoff_ms` 
 
   * Value type is <<number,number>>
-  * Default value is `10`
+  * There is no default value for this setting.
 
-The amount of time to wait before attempting to reconnect to a given host when a connection fails.
+The base amount of time to wait before attempting to reconnect to a given host.
+This avoids repeatedly connecting to a host in a tight loop.
+This backoff applies to all connection attempts by the client to a broker.
+
+[id="plugins-{type}s-{plugin}-reconnect_backoff_max_ms"]
+===== `reconnect_backoff_max_ms`
+
+  * Value type is <<number,number>>
+  * There is no default value for this setting.
+
+The maximum amount of time to wait when reconnecting to a broker that has repeatedly failed to connect.
+If provided, the backoff per host will increase exponentially for each consecutive connection failure,
+up to this maximum.
+After calculating the backoff increase, 20% random jitter is added to avoid connection storms.
 
 [id="plugins-{type}s-{plugin}-request_timeout_ms"]
 ===== `request_timeout_ms` 

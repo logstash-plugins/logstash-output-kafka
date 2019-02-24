@@ -1,26 +1,37 @@
+## 8.0.3
+  - Fixed Kafka client avoiding exponential reconnection backoff because of `reconnect_backoff_ms` default value.
+    Removed default value of `reconnect_backoff_ms` option.
+    Added `reconnect_backoff_max_ms` option to set max backoff.
+    [#221](https://github.com/logstash-plugins/logstash-output-kafka/pull/221)
+
 ## 8.0.1
-  - Fixed issue with unnecessary sleep after retries exhausted [#216](https://github.com/logstash-plugins/logstash-output-kafka/pull/216)
+  - Fixed issue with unnecessary sleep after retries exhausted
+    [#216](https://github.com/logstash-plugins/logstash-output-kafka/pull/216)
 
 ## 8.0.0
   - Removed obsolete `block_on_buffer_full`, `ssl` and `timeout_ms` options
 
 ## 7.3.1
-  - Added support for kafka property `ssl.endpoint.identification.algorithm` [#213](https://github.com/logstash-plugins/logstash-output-kafka/pull/213)
+  - Added support for kafka property `ssl.endpoint.identification.algorithm`
+    [#213](https://github.com/logstash-plugins/logstash-output-kafka/pull/213)
 
 ## 7.3.0
   - Changed Kafka client to version 2.1.0
 
 ## 7.2.1
-  - Changed Kafka client to version 2.0.1 [#209](https://github.com/logstash-plugins/logstash-output-kafka/pull/209)
+  - Changed Kafka client to version 2.0.1
+    [#209](https://github.com/logstash-plugins/logstash-output-kafka/pull/209)
 
 ## 7.2.0
   - Upgrade Kafka client to version 2.0.0
 
 ## 7.1.2
-  - Fixed handling of two settings that weren't wired to the kafka client [#198](https://github.com/logstash-plugins/logstash-output-kafka/pull/198)
+  - Fixed handling of two settings that weren't wired to the kafka client
+    [#198](https://github.com/logstash-plugins/logstash-output-kafka/pull/198)
 
 ## 7.1.1
-  - Changed Kafka send errors to log as warn [#179](https://github.com/logstash-plugins/logstash-output-kafka/pull/179)
+  - Changed Kafka send errors to log as warn
+    [#179](https://github.com/logstash-plugins/logstash-output-kafka/pull/179)
 
 ## 7.1.0
   - Internal: Update build to gradle
@@ -113,20 +124,21 @@
 
 ## 4.0.0
   - Republish all the gems under jruby.
-  - Update the plugin to the version 2.0 of the plugin api, this change is required for Logstash 5.0 compatibility. See https://github.com/elastic/logstash/issues/5141
+  - Update the plugin to the version 2.0 of the plugin api, this change is required for Logstash 5.0 compatibility. 
+    See https://github.com/elastic/logstash/issues/5141
   
 ## 3.0.0
- - GA release of Kafka Output to support 0.9 broker
+  - GA release of Kafka Output to support 0.9 broker
 
 ## 3.0.0.beta4
- - Fix Log4j warnings by setting up the logger (#62)
+  - Fix Log4j warnings by setting up the logger (#62)
 
 ## 3.0.0.beta3
- - Use jar dependencies
- - Fixed snappy compression issue
+  - Use jar dependencies
+  - Fixed snappy compression issue
 
 ## 3.0.0.beta2
- - Internal: Update gemspec dependency
+  - Internal: Update gemspec dependency
 
 ## 2.0.4
   - Depend on logstash-core-plugin-api instead of logstash-core, removing the need to mass update plugins on major releases of logstash
@@ -136,23 +148,23 @@
   - New dependency requirements for logstash-core for the 5.0 release
 
 ## 3.0.0.beta1
- - Note: breaking changes in this version, and not backward compatible with Kafka 0.8 broker. 
-   Please read carefully before installing
- - Breaking: Changed default codec from json to plain. Json codec is really slow when used 
-   with inputs because inputs by default are single threaded. This makes it a bad
-   first user experience. Plain codec is a much better default. 
- - Moved internal APIs to use Kafka's Java API directly instead of jruby-kafka. This
-   makes it consistent with logstash-input-kafka
- - Breaking: Change in configuration options
- - Added SSL options so you can connect securely to a 0.9 Kafka broker
+  - Note: breaking changes in this version, and not backward compatible with Kafka 0.8 broker. 
+    Please read carefully before installing
+  - Breaking: Changed default codec from json to plain. Json codec is really slow when used 
+    with inputs because inputs by default are single threaded. This makes it a bad
+    first user experience. Plain codec is a much better default. 
+  - Moved internal APIs to use Kafka's Java API directly instead of jruby-kafka. This
+    makes it consistent with logstash-input-kafka
+  - Breaking: Change in configuration options
+  - Added SSL options so you can connect securely to a 0.9 Kafka broker
 
 ## 2.0.2
- - [Internal] Pin jruby-kafka to v1.5
+  - [Internal] Pin jruby-kafka to v1.5
 
 ## 2.0.0
- - Plugins were updated to follow the new shutdown semantic, this mainly allows Logstash to instruct input plugins to terminate gracefully, 
-   instead of using Thread.raise on the plugins' threads. Ref: https://github.com/elastic/logstash/pull/3895
- - Dependency on logstash-core update to 2.0
+  - Plugins were updated to follow the new shutdown semantic, this mainly allows Logstash to instruct input plugins to terminate gracefully, 
+    instead of using Thread.raise on the plugins' threads. Ref: https://github.com/elastic/logstash/pull/3895
+  - Dependency on logstash-core update to 2.0
 
 # ## 2.0.0.beta.1
- - Change to 0.8.2 version of Kafka producer. This will unfortunately break existing configuration, but has a lot of enhancements and fixes.
+  - Change to 0.8.2 version of Kafka producer. This will unfortunately break existing configuration, but has a lot of enhancements and fixes.

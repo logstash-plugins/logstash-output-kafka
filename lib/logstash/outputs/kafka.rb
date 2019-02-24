@@ -102,8 +102,15 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
   config :metadata_max_age_ms, :validate => :number, :default => 300000
   # The size of the TCP receive buffer to use when reading data
   config :receive_buffer_bytes, :validate => :number, :default => 32768
-  # The amount of time to wait before attempting to reconnect to a given host when a connection fails.
-  config :reconnect_backoff_ms, :validate => :number, :default => 10
+  # The base amount of time to wait before attempting to reconnect to a given host.
+  # This avoids repeatedly connecting to a host in a tight loop.
+  # This backoff applies to all connection attempts by the client to a broker.
+  config :reconnect_backoff_ms, :validate => :number
+  # The maximum amount of time to wait when reconnecting to a broker that has repeatedly failed to connect.
+  # If provided, the backoff per host will increase exponentially for each consecutive connection failure,
+  # up to this maximum.
+  # After calculating the backoff increase, 20% random jitter is added to avoid connection storms.
+  config :reconnect_backoff_max_ms, :validate => :number
   # The configuration controls the maximum amount of time the client will wait
   # for the response of a request. If the response is not received before the timeout
   # elapses the client will resend the request if necessary or fail the request if
@@ -323,6 +330,7 @@ class LogStash::Outputs::Kafka < LogStash::Outputs::Base
       props.put(kafka::METADATA_MAX_AGE_CONFIG, metadata_max_age_ms) unless metadata_max_age_ms.nil?
       props.put(kafka::RECEIVE_BUFFER_CONFIG, receive_buffer_bytes.to_s) unless receive_buffer_bytes.nil?
       props.put(kafka::RECONNECT_BACKOFF_MS_CONFIG, reconnect_backoff_ms) unless reconnect_backoff_ms.nil?
+      props.put(kafka::RECONNECT_BACKOFF_MAX_MS_CONFIG, reconnect_backoff_max_ms) unless reconnect_backoff_max_ms.nil?
       props.put(kafka::REQUEST_TIMEOUT_MS_CONFIG, request_timeout_ms) unless request_timeout_ms.nil?
       props.put(kafka::RETRIES_CONFIG, retries.to_s) unless retries.nil?
       props.put(kafka::RETRY_BACKOFF_MS_CONFIG, retry_backoff_ms.to_s) 
