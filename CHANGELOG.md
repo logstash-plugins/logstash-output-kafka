@@ -1,3 +1,6 @@
+## 8.0.2
+  - Changed Kafka client version to 2.1.1 [#220](https://github.com/logstash-plugins/logstash-output-kafka/pull/220)
+
 ## 8.0.1
   - Fixed issue with unnecessary sleep after retries exhausted [#216](https://github.com/logstash-plugins/logstash-output-kafka/pull/216)
 
