@@ -78,6 +78,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 | <<plugins-{type}s-{plugin}-request_timeout_ms>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-retries>> |<<number,number>>|No
 | <<plugins-{type}s-{plugin}-retry_backoff_ms>> |<<number,number>>|No
+| <<plugins-{type}s-{plugin}-sasl_jaas_config>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-sasl_kerberos_service_name>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-sasl_mechanism>> |<<string,string>>|No
 | <<plugins-{type}s-{plugin}-security_protocol>> |<<string,string>>, one of `["PLAINTEXT", "SSL", "SASL_PLAINTEXT", "SASL_SSL"]`|No
@@ -297,6 +298,24 @@ A value less than zero is a configuration error.
   * Default value is `100`
 
 The amount of time to wait before attempting to retry a failed produce request to a given topic partition.
+
+[id="plugins-{type}s-{plugin}-sasl_jaas_config"]
+===== `sasl_jaas_config` 
+
+  * Value type is <<string,string>>
+  * There is no default value for this setting.
+
+JAAS configuration setting local to this plugin instance, as opposed to settings using config file configured using `jaas_path`, which are shared across the JVM. This allows each plugin instance to have its own configuration. 
+
+If both `sasl_jaas_config` and `jaas_path` configurations are set, the setting here takes precedence.
+
+Example (setting for Azure Event Hub):
+[source,ruby]
+    output {
+      kafka {
+        sasl_jaas_config => "org.apache.kafka.common.security.plain.PlainLoginModule required username='auser'  password='apassword';"
+      }
+    }
 
 [id="plugins-{type}s-{plugin}-sasl_kerberos_service_name"]
 ===== `sasl_kerberos_service_name` 
