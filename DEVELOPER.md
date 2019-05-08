@@ -16,7 +16,7 @@ See http://kafka.apache.org/documentation.html#producerconfigs for details about
         kafka {
             topic_id => ... # string (required), The topic to produce the messages to
             broker_list => ... # string (optional), default: "localhost:9092", This is for bootstrapping and the producer will only use it for getting metadata
-            compression_codec => ... # string (optional), one of ["none", "gzip", "snappy"], default: "none"
+            compression_codec => ... # string (optional), one of ["none", "gzip", "snappy", "lz4", "zstd"], default: "none"
             compressed_topics => ... # string (optional), default: "", This parameter allows you to set whether compression should be turned on for particular
             request_required_acks => ... # number (optional), one of [-1, 0, 1], default: 0, This value controls when a produce request is considered completed
             serializer_class => ... # string, (optional) default: "kafka.serializer.StringEncoder", The serializer class for messages. The default encoder takes a byte[] and returns the same byte[]

@@ -136,6 +136,15 @@ describe "outputs/kafka", :integration => true do
     end
   end
 
+  context 'when using zstd compression' do
+    let(:test_topic) { 'zstd_topic' }
+
+    before :each do
+      config = base_config.merge({"topic_id" => test_topic, "compression_type" => "zstd"})
+      load_kafka_data(config)
+    end
+  end
+
   context 'when using LZ4 compression' do
     let(:test_topic) { 'lz4_topic' }
 
