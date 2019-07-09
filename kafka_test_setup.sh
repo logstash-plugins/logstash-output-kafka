@@ -5,7 +5,7 @@ set -ex
 if [ -n "${KAFKA_VERSION+1}" ]; then
   echo "KAFKA_VERSION is $KAFKA_VERSION"
 else
-   KAFKA_VERSION=2.0.1
+   KAFKA_VERSION=2.1.1
 fi
 
 echo "Downloading Kafka version $KAFKA_VERSION"
