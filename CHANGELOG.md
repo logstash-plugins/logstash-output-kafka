@@ -1,3 +1,6 @@
+## 8.0.2
+  - Added support for `sasl_jaas_config` setting to allow JAAS config per plugin, rather than per JVM [#223](https://github.com/logstash-plugins/logstash-output-kafka/pull/223)
+
 ## 8.0.1
   - Fixed issue with unnecessary sleep after retries exhausted [#216](https://github.com/logstash-plugins/logstash-output-kafka/pull/216)
 
