@@ -1,3 +1,6 @@
+## 8.1.0
+  - Updated kafka client to version 2.3.0
+
 ## 8.0.2
   - Added support for `sasl_jaas_config` setting to allow JAAS config per plugin, rather than per JVM [#223](https://github.com/logstash-plugins/logstash-output-kafka/pull/223)
 
