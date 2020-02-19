@@ -3,10 +3,10 @@
 :default_codec: plain
 
 /////////////////////////////////////////////
-// Kafka Output Plugin Source Has Moved  //
+// Kafka Output Plugin Source Has Moved    //
 // --------------------------------------- //
-// The Kafka Output Plugin is now a part //
-// of the Kafka Integration.            //
+// The Kafka Output Plugin is now a part   //
+// of the Kafka Integration.               //
 //                                         //
 // This stand-alone plugin project remains //
 // open for backports to the 8.x series.   //
