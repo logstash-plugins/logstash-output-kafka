@@ -11,14 +11,14 @@ describe "outputs/kafka" do
   context 'when initializing' do
     it "should register" do
       output = LogStash::Plugin.lookup("output", "kafka").new(simple_kafka_config)
-      expect {output.register}.to_not raise_error
+      expect { output.register }.to_not raise_error
     end
 
     it 'should populate kafka config with default values' do
       kafka = LogStash::Outputs::Kafka.new(simple_kafka_config)
-      insist {kafka.bootstrap_servers} == 'localhost:9092'
-      insist {kafka.topic_id} == 'test'
-      insist {kafka.key_serializer} == 'org.apache.kafka.common.serialization.StringSerializer'
+      expect(kafka.bootstrap_servers).to eql 'localhost:9092'
+      expect(kafka.topic_id).to eql 'test'
+      expect(kafka.key_serializer).to eql 'org.apache.kafka.common.serialization.StringSerializer'
     end
   end
 
@@ -55,7 +55,7 @@ describe "outputs/kafka" do
       expect { kafka.register }.to raise_error(LogStash::ConfigurationError, /ssl_truststore_location must be set when SSL is enabled/)
     end
   end
-  
+
   context "when KafkaProducer#send() raises an exception" do
     let(:failcount) { (rand * 10).to_i }
     let(:sendcount) { failcount + 1 }
